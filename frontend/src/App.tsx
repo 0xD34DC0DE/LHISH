@@ -5,6 +5,8 @@ import {
     AppBar,
     Avatar,
     Box,
+    Card,
+    CardContent,
     Container,
     Divider,
     IconButton,
@@ -12,10 +14,19 @@ import {
     Toolbar,
     Typography,
 } from "@mui/material";
+import Masonry from '@mui/lab/Masonry';
 import StarIcon from '@mui/icons-material/Star';
 import MenuIcon from '@mui/icons-material/Menu';
 import {SearchBar} from "./components/SearchBar";
 import {yellow} from "@mui/material/colors";
+
+// const Item = styled(Paper)(({theme}) => ({
+//     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+//     ...theme.typography.body2,
+//     padding: theme.spacing(0.5),
+//     textAlign: 'center',
+//     color: theme.palette.text.secondary,
+// }));
 
 function App() {
     const [page, setPage] = useState(0);
@@ -29,6 +40,20 @@ function App() {
 
     }
 
+    const makeCard = (number: number) => {
+        return (
+            <React.Fragment>
+                <CardContent>
+                    <Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>
+                        {
+                            [...Array(Math.round((Math.random() * 10) + 1.0))]
+                                .map(() =>{ return <Typography>{number}</Typography>})}
+                    </Typography>
+                </CardContent>
+            </React.Fragment>)
+    }
+
+    const numbers = [150, 30, 90, 70, 90, 100, 150, 30, 50, 80];
     return (
         <SessionContextProvider>
             <AppBar position="static">
@@ -80,6 +105,14 @@ function App() {
                     }}
                 />
                 <Divider/>
+
+                <Masonry>
+                    {numbers.map((height, index) => (
+                        <Card key={index}>
+                            {makeCard(index + 1)}
+                        </Card>
+                    ))}
+                </Masonry>
             </Container>
 
         </SessionContextProvider>
