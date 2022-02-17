@@ -5,8 +5,6 @@ import {
     AppBar,
     Avatar,
     Box,
-    Card,
-    CardContent,
     Container,
     Divider,
     IconButton,
@@ -14,10 +12,10 @@ import {
     Toolbar,
     Typography,
 } from "@mui/material";
-import Masonry from '@mui/lab/Masonry';
 import StarIcon from '@mui/icons-material/Star';
 import MenuIcon from '@mui/icons-material/Menu';
 import {SearchBar} from "./components/SearchBar";
+import {CardMasonry} from "./components/CardMasonry";
 import {yellow} from "@mui/material/colors";
 
 // const Item = styled(Paper)(({theme}) => ({
@@ -27,6 +25,7 @@ import {yellow} from "@mui/material/colors";
 //     textAlign: 'center',
 //     color: theme.palette.text.secondary,
 // }));
+
 
 function App() {
     const [page, setPage] = useState(0);
@@ -38,19 +37,6 @@ function App() {
 
     function handleChangeRowsPerPage() {
 
-    }
-
-    const makeCard = (number: number) => {
-        return (
-            <React.Fragment>
-                <CardContent>
-                    <Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>
-                        {
-                            [...Array(Math.round((Math.random() * 10) + 1.0))]
-                                .map(() =>{ return <Typography>{number}</Typography>})}
-                    </Typography>
-                </CardContent>
-            </React.Fragment>)
     }
 
     const numbers = [150, 30, 90, 70, 90, 100, 150, 30, 50, 80];
@@ -104,15 +90,10 @@ function App() {
                         }
                     }}
                 />
-                <Divider/>
+                <Divider sx={{marginBottom: 3}}/>
 
-                <Masonry>
-                    {numbers.map((height, index) => (
-                        <Card key={index}>
-                            {makeCard(index + 1)}
-                        </Card>
-                    ))}
-                </Masonry>
+                {/*TODO add column number change when going small (responsive)*/}
+                <CardMasonry numbers={numbers}/>
             </Container>
 
         </SessionContextProvider>
