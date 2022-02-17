@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import './App.css';
 import {SessionContextProvider} from "./contexts/SessionContext";
 import {
@@ -17,6 +17,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {SearchBar} from "./components/SearchBar";
 import {CardMasonry} from "./components/CardMasonry";
 import {yellow} from "@mui/material/colors";
+import {MenuDrawer, DrawerRef} from "./components/MenuDrawer";
+import {DrawerMenuItem} from "./components/DrawerMenuItem";
 
 // const Item = styled(Paper)(({theme}) => ({
 //     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -26,10 +28,10 @@ import {yellow} from "@mui/material/colors";
 //     color: theme.palette.text.secondary,
 // }));
 
-
 function App() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const drawerRef = useRef<DrawerRef>(null);
 
     function handleChangePage() {
 
@@ -40,9 +42,20 @@ function App() {
     }
 
     const numbers = [150, 30, 90, 70, 90, 100, 150, 30, 50, 80];
+
+    function openDrawer() {
+        if(drawerRef.current) {
+            drawerRef.current.openDrawer()
+        }
+    }
+
     return (
         <SessionContextProvider>
             <AppBar position="sticky">
+                <MenuDrawer ref={drawerRef}>
+                    <DrawerMenuItem menuText={"Menu1"}/>
+                    {/*<DrawerMenuItem menuText={"Menu2"}/>*/}
+                </MenuDrawer>
                 <Box>
                     <Toolbar variant="dense" sx={{
                         display: "flex",
@@ -52,7 +65,7 @@ function App() {
                     }}>
 
                         <IconButton edge="start" color="inherit" aria-label="menu" sx={{mr: 2}}>
-                            <MenuIcon/>
+                            <MenuIcon onClick={() => openDrawer()}/>
                         </IconButton>
 
                         <Box sx={{flexGrow: 0.6}}>
