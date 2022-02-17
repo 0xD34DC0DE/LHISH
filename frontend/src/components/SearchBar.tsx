@@ -21,7 +21,7 @@ export const SearchBar = ({label = "", onSubmit}: SearchBarPropTypes) => {
                 placeholder={label}
                 inputProps={{'aria-label': label}}
             />
-            <IconButton type="submit" sx={{p: '10px'}} aria-label="search">
+            <IconButton type="submit" sx={{p: '10px'}} aria-label="clear">
                 <ClearIcon/>
             </IconButton>
         </Paper>
