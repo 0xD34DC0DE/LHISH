@@ -1,6 +1,4 @@
 import {Card, CardActions, CardContent, CardMedia, IconButton, Link, Typography} from "@mui/material";
-import UserHistory from "../icons/UserHistoryIcon";
-import NotListedLocationIcon from "@mui/icons-material/NotListedLocation";
 import ClearIcon from "@mui/icons-material/Clear";
 import React from "react";
 import LaunchIcon from '@mui/icons-material/Launch';
@@ -16,7 +14,7 @@ function SuperscriptLinkIcon() {
 
 export const CategoryCard = ({id = 0, categoryName}: CategoryCardPropsType) => {
     return (
-        <Card sx={{borderRadius: 2, borderWidth: 2, borderColor: "#a1a1a1"}}>
+        <Card variant="outlined" sx={{borderRadius: 2, borderWidth: 2, borderColor: "#a1a1a1"}}>
             <CardMedia
                 component="img"
                 height="140"

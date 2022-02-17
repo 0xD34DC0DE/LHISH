@@ -21,7 +21,7 @@ interface ItemCardPropsType {
 export const ItemCard = ({ id = 0, itemTitle, itemText="", itemAvailability=Availability.Unknown }: ItemCardPropsType) => {
 
     return (
-        <Card sx={{borderRadius: 2, borderWidth: 2, borderColor: "#a1a1a1"}}>
+        <Card variant="outlined" sx={{borderRadius: 2, borderWidth: 2, borderColor: "#a1a1a1"}}>
             <CardMedia
                 component="img"
                 height="140"
@@ -30,6 +30,7 @@ export const ItemCard = ({ id = 0, itemTitle, itemText="", itemAvailability=Avai
             <CardContent>
                 <Typography variant="h5">{itemTitle}</Typography>
                 <Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>
+                    {itemText + itemAvailability.toString()}
                     {
                         [...Array(Math.round((Math.random() * 10) + 1.0))]
                             .map(() => {
