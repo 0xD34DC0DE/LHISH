@@ -12,27 +12,28 @@ enum Availability {
 }
 
 interface ItemCardPropsType {
-    key?: number,
+    id?: number,
     itemTitle: string,
     itemText: string,
-    itemAvailability: Availability
+    itemAvailability?: Availability
 }
 
-export const ItemCard = ({ key=0, itemTitle, itemText="", itemAvailability=Availability.Unknown }: ItemCardPropsType) => {
+export const ItemCard = ({ id = 0, itemTitle, itemText="", itemAvailability=Availability.Unknown }: ItemCardPropsType) => {
+
     return (
         <Card sx={{borderRadius: 2, borderWidth: 2, borderColor: "#a1a1a1"}}>
             <CardMedia
                 component="img"
                 height="140"
-                image={`https://picsum.photos/id/${key * 100}/200/140`}
+                image={`https://picsum.photos/id/${id * 100}/200/140`}
             />
             <CardContent>
-                <Typography variant="h2">{itemTitle}</Typography>
+                <Typography variant="h5">{itemTitle}</Typography>
                 <Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>
                     {
                         [...Array(Math.round((Math.random() * 10) + 1.0))]
                             .map(() => {
-                                return <Typography>{1}</Typography>
+                                return <Typography>{id}</Typography>
                             })
                     }
                 </Typography>
