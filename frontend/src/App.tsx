@@ -42,7 +42,7 @@ function App() {
     const numbers = [150, 30, 90, 70, 90, 100, 150, 30, 50, 80];
     return (
         <SessionContextProvider>
-            <AppBar position="static">
+            <AppBar position="sticky">
                 <Box>
                     <Toolbar variant="dense" sx={{
                         display: "flex",
