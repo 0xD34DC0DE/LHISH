@@ -10,13 +10,11 @@ export interface DrawerMenuItemPropTypes {
 
 export const DrawerMenuItem = ({key = 0, menuName, onClick}: DrawerMenuItemPropTypes) => {
     return (
-        <Link key={key} href="#" underline={"none"} color={"inherit"} onClick={onClick}>
-            <ListItem button key={key}>
+            <ListItem button key={key} onClick={onClick} divider>
                 <ListItemIcon>
                     {key % 2 === 0 ? <CategoryIcon/> : <ListAltIcon/>}
                 </ListItemIcon>
-                <ListItemText primary={menuName}/>
+                <ListItemText sx={{marginRight: 2}} primary={menuName}/>
             </ListItem>
-        </Link>
     );
 };
