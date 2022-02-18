@@ -13,9 +13,9 @@ export const CardMasonry = ({numbers}: CardMasonryParams) => {
         <Masonry>
             {numbers.map((e, i) => {
                 if (i % 2 == 0) {
-                    return <ItemCard id={i} itemText={i + "text"} itemTitle="Title"/>
+                    return <ItemCard key={i} id={i} itemText={i + "text"} itemTitle="Title"/>
                 } else {
-                    return <CategoryCard id={i} categoryName={"Category"}/>
+                    return <CategoryCard key={i} id={i} categoryName={"Category"}/>
                 }
             })}
         </Masonry>
