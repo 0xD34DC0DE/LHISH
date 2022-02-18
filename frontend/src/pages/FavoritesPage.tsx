@@ -19,7 +19,7 @@ const FavoritesPage = () => {
         <Typography sx={{
             display: "inline-flex",
             alignItems: "center",
-            my: 2
+            marginTop: 3
         }} variant={"h2"}>Favorites<StarIcon fontSize="inherit" sx={{color: yellow[600], ml: 3}}/></Typography>
 
         <TablePagination
