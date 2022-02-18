@@ -1,16 +1,14 @@
 import React, {useState, forwardRef, useImperativeHandle, ReactElement} from "react";
-import {DrawerMenuItem, IDrawerMenuItem} from "./DrawerMenuItem";
+import {DrawerMenuItem} from "./DrawerMenuItem";
 import {Box, List, Drawer} from "@mui/material";
 
 export type DrawerRef = {
-    openDrawer: () => void
+    openDrawer: () => void,
+    closeDrawer: () => void
 }
 
-type ChildMenuItemType = React.FunctionComponent<IDrawerMenuItem>;
-type FCChildMenuItemPropType = ChildMenuItemType | ChildMenuItemType[] | null;
-
 type DrawerProps = {
-    children?: FCChildMenuItemPropType | ReactElement
+    children?: React.ReactNode | React.ReactNode[] | null
 }
 
 export const MenuDrawer = forwardRef<DrawerRef, DrawerProps>(({children}, ref) => {
@@ -32,6 +30,9 @@ export const MenuDrawer = forwardRef<DrawerRef, DrawerProps>(({children}, ref) =
     useImperativeHandle(ref, () => ({
         openDrawer: () => {
             setOpened(true);
+        },
+        closeDrawer: () => {
+            setOpened(false);
         }
     }));
 
@@ -39,8 +40,9 @@ export const MenuDrawer = forwardRef<DrawerRef, DrawerProps>(({children}, ref) =
         if(!children)
             return [];
 
+        // Sets the key of the children
         if(Array.isArray(children)) {
-            return React.Children.map(children, e => e); // Sets the key of the children
+            return React.Children.map(children, e => e);
         } else {
             return React.Children.map([children], e => e);
         }
