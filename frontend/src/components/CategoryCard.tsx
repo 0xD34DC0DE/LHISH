@@ -2,28 +2,27 @@ import {Card, CardActions, CardContent, CardMedia, IconButton, Link, Typography}
 import ClearIcon from "@mui/icons-material/Clear";
 import React from "react";
 import LaunchIcon from '@mui/icons-material/Launch';
+import ICategory from "../models/CategoryModel";
 
-interface CategoryCardPropsType {
-    id?: number,
-    categoryName: string
-}
+export interface ICategoryCardComponent {}
 
-function SuperscriptLinkIcon() {
-    return <LaunchIcon sx={{marginLeft: 0.5, marginBottom: 1, fontSize: 12}}/>;
-}
+export const CategoryCard : ICategoryCardComponent & React.FunctionComponent<ICategory> = ({id, name}: ICategory) => {
 
-export const CategoryCard = ({id = 0, categoryName}: CategoryCardPropsType) => {
+    const SuperscriptLinkIcon = () => {
+        return <LaunchIcon sx={{marginLeft: 0.5, marginBottom: 1, fontSize: 12}}/>;
+    }
+
     return (
         <Card variant="outlined" sx={{borderRadius: 2, borderWidth: 2, borderColor: "#a1a1a1"}}>
             <CardMedia
                 component="img"
                 height="140"
-                image={`https://picsum.photos/id/${id * 100}/200/140`}
+                image={`https://picsum.photos/id/${parseInt(id) * 100}/200/140`}
             />
             <CardContent>
                 <Link href="#" underline={"none"} color={"inherit"}>
                     <Typography variant="h5"
-                                sx={{alignContent: "top"}}>{categoryName}<SuperscriptLinkIcon/></Typography>
+                                sx={{alignContent: "top"}}>{name}<SuperscriptLinkIcon/></Typography>
                 </Link>
                 <Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>
                     Category

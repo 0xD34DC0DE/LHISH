@@ -1,5 +1,4 @@
-import React, {useState, forwardRef, useImperativeHandle, ReactElement} from "react";
-import {DrawerMenuItem} from "./DrawerMenuItem";
+import React, {useState, forwardRef, useImperativeHandle} from "react";
 import {Box, List, Drawer} from "@mui/material";
 
 export type DrawerRef = {
@@ -13,19 +12,6 @@ type DrawerProps = {
 
 export const MenuDrawer = forwardRef<DrawerRef, DrawerProps>(({children}, ref) => {
     const [opened, setOpened] = useState(false);
-
-    const onToggleDrawer = (event: React.KeyboardEvent | React.MouseEvent) => {
-        if (
-            event &&
-            event.type === 'keydown' &&
-            ((event as React.KeyboardEvent).key === 'Tab' ||
-                (event as React.KeyboardEvent).key === 'Shift')
-        ) {
-            return;
-        }
-
-        setOpened(!opened);
-    };
 
     useImperativeHandle(ref, () => ({
         openDrawer: () => {

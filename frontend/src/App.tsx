@@ -1,120 +1,39 @@
-import React, {useRef, useState} from 'react';
+import React, {useContext} from 'react';
 import './App.css';
-import {SessionContextProvider} from "./contexts/SessionContext";
-import {
-    AppBar,
-    Avatar,
-    Box,
-    Container,
-    Divider,
-    IconButton,
-    TablePagination,
-    Toolbar,
-    Typography,
-} from "@mui/material";
-import StarIcon from '@mui/icons-material/Star';
-import MenuIcon from '@mui/icons-material/Menu';
-import {SearchBar} from "./components/SearchBar";
-import {CardMasonry} from "./components/CardMasonry";
-import {yellow} from "@mui/material/colors";
-import {MenuDrawer, DrawerRef} from "./components/MenuDrawer";
-import {DrawerMenuItem} from "./components/DrawerMenuItem";
+import SessionContext, {SessionContextProvider} from "./contexts/SessionContext";
 
-// const Item = styled(Paper)(({theme}) => ({
-//     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-//     ...theme.typography.body2,
-//     padding: theme.spacing(0.5),
-//     textAlign: 'center',
-//     color: theme.palette.text.secondary,
-// }));
 
-function App() {
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
-    const drawerRef = useRef<DrawerRef>(null);
+interface ProtectedRouteProps {
+    requiresLoggedIn: boolean, // Find a way to make it a prop that doesn't require a value -> like the disabled prop
+    path: string,
+    role: string | string []
+    element: React.ReactNode
+}
 
-    function handleChangePage() {
+const ProtectedRoute = ({path}: ProtectedRouteProps) => {
+/*
+* TODO use <Routes>
+* then filter children of <Routes>
+* (instances of <Route> using ProtectedRouteProps) based on context role and login state)
+*/
+}
 
-    }
-
-    function handleChangeRowsPerPage() {
-
-    }
-
-    const numbers = [150, 30, 90, 70, 90, 100, 150, 30, 50, 80];
-
-    const openDrawer = () => {
-        if(drawerRef.current) {
-            drawerRef.current.openDrawer()
-        }
-    }
-
-    const closeDrawer = () => {
-        if(drawerRef.current) {
-            drawerRef.current.closeDrawer()
-        }
-    }
+const ProtectedRoutes: React.FunctionComponent = ({children}) => {
+    const {state, dispatch} = useContext(SessionContext);
 
     return (
+        <>
+
+        </>
+    );
+}
+
+function App() {
+    return (
         <SessionContextProvider>
-            <AppBar position="sticky">
-                <MenuDrawer ref={drawerRef}>
-                    <DrawerMenuItem menuName={"Menu1"} onClick={closeDrawer}/>
-                    <DrawerMenuItem menuName={"Menu2"} onClick={closeDrawer}/>
-                </MenuDrawer>
-                <Box>
-                    <Toolbar variant="dense" sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center"
-                    }}>
+            <ProtectedRoutes>
 
-                        <IconButton onClick={() => openDrawer()} edge="start" color="inherit" aria-label="menu" sx={{mr: 2}}>
-                            <MenuIcon/>
-                        </IconButton>
-
-                        <Box sx={{flexGrow: 0.6}}>
-                            <SearchBar label={"Quick Search..."} onSubmit={() => {
-                            }}/>
-                        </Box>
-
-                        <IconButton>
-                            <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg"/>
-                        </IconButton>
-
-                    </Toolbar>
-                </Box>
-            </AppBar>
-
-            <Container>
-                <Typography sx={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    my: 2
-                }} variant={"h2"}>Favorites<StarIcon fontSize="inherit" sx={{color: yellow[600], ml: 3}}/></Typography>
-
-                <TablePagination
-                    component="div"
-                    count={100}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    rowsPerPage={rowsPerPage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    sx={{
-                        ml: 0,
-                        display: "flex",
-                        '& .MuiToolbar-root': {
-                            paddingLeft: 0.5,
-                        }
-                    }}
-                />
-                <Divider sx={{marginBottom: 3}}/>
-
-                {/*TODO add column number change when going small (responsive)*/}
-                <CardMasonry numbers={numbers}/>
-            </Container>
-
+            </ProtectedRoutes>
         </SessionContextProvider>
     );
 }
