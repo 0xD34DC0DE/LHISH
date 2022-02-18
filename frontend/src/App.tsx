@@ -43,9 +43,15 @@ function App() {
 
     const numbers = [150, 30, 90, 70, 90, 100, 150, 30, 50, 80];
 
-    function openDrawer() {
+    const openDrawer = () => {
         if(drawerRef.current) {
             drawerRef.current.openDrawer()
+        }
+    }
+
+    const closeDrawer = () => {
+        if(drawerRef.current) {
+            drawerRef.current.closeDrawer()
         }
     }
 
@@ -53,8 +59,8 @@ function App() {
         <SessionContextProvider>
             <AppBar position="sticky">
                 <MenuDrawer ref={drawerRef}>
-                    <DrawerMenuItem menuText={"Menu1"}/>
-                    {/*<DrawerMenuItem menuText={"Menu2"}/>*/}
+                    <DrawerMenuItem menuName={"Menu1"} onClick={closeDrawer}/>
+                    <DrawerMenuItem menuName={"Menu2"} onClick={closeDrawer}/>
                 </MenuDrawer>
                 <Box>
                     <Toolbar variant="dense" sx={{
@@ -64,8 +70,8 @@ function App() {
                         alignItems: "center"
                     }}>
 
-                        <IconButton edge="start" color="inherit" aria-label="menu" sx={{mr: 2}}>
-                            <MenuIcon onClick={() => openDrawer()}/>
+                        <IconButton onClick={() => openDrawer()} edge="start" color="inherit" aria-label="menu" sx={{mr: 2}}>
+                            <MenuIcon/>
                         </IconButton>
 
                         <Box sx={{flexGrow: 0.6}}>
