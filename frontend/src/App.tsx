@@ -1,24 +1,13 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef} from 'react';
 import './App.css';
 import {SessionContextProvider} from "./contexts/SessionContext";
-import {
-    AppBar,
-    Avatar,
-    Box,
-    Container,
-    Divider,
-    IconButton,
-    TablePagination,
-    Toolbar,
-    Typography,
-} from "@mui/material";
-import StarIcon from '@mui/icons-material/Star';
+import {AppBar, Avatar, Box, Container, IconButton, Toolbar,} from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import {SearchBar} from "./components/SearchBar";
-import {CardMasonry} from "./components/CardMasonry";
-import {yellow} from "@mui/material/colors";
-import {MenuDrawer, DrawerRef} from "./components/MenuDrawer";
+import {DrawerRef, MenuDrawer} from "./components/MenuDrawer";
 import {DrawerMenuItem} from "./components/DrawerMenuItem";
+import {Route, Routes, useNavigate} from "react-router-dom";
+import FavoritesPage from "./pages/FavoritesPage";
 
 // const Item = styled(Paper)(({theme}) => ({
 //     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -28,39 +17,35 @@ import {DrawerMenuItem} from "./components/DrawerMenuItem";
 //     color: theme.palette.text.secondary,
 // }));
 
+
+
 function App() {
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
     const drawerRef = useRef<DrawerRef>(null);
-
-    function handleChangePage() {
-
-    }
-
-    function handleChangeRowsPerPage() {
-
-    }
-
-    const numbers = [150, 30, 90, 70, 90, 100, 150, 30, 50, 80];
+    const navigate = useNavigate();
 
     const openDrawer = () => {
-        if(drawerRef.current) {
+        if (drawerRef.current) {
             drawerRef.current.openDrawer()
         }
     }
 
     const closeDrawer = () => {
-        if(drawerRef.current) {
+        if (drawerRef.current) {
             drawerRef.current.closeDrawer()
         }
+    }
+
+    const navigate_to = (path: string) => {
+        closeDrawer();
+        navigate(path, {replace: true});
     }
 
     return (
         <SessionContextProvider>
             <AppBar position="sticky">
                 <MenuDrawer ref={drawerRef}>
-                    <DrawerMenuItem menuName={"Menu1"} onClick={closeDrawer}/>
-                    <DrawerMenuItem menuName={"Menu2"} onClick={closeDrawer}/>
+                    <DrawerMenuItem menuName={"Favorites"} onClick={() => navigate_to("/favorites")}/>
+                    <DrawerMenuItem menuName={"Categories"} onClick={() => navigate_to("/")}/>
                 </MenuDrawer>
                 <Box>
                     <Toolbar variant="dense" sx={{
@@ -70,7 +55,8 @@ function App() {
                         alignItems: "center"
                     }}>
 
-                        <IconButton onClick={() => openDrawer()} edge="start" color="inherit" aria-label="menu" sx={{mr: 2}}>
+                        <IconButton onClick={openDrawer} edge="start" color="inherit" aria-label="menu"
+                                    sx={{mr: 2}}>
                             <MenuIcon/>
                         </IconButton>
 
@@ -88,31 +74,10 @@ function App() {
             </AppBar>
 
             <Container>
-                <Typography sx={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    my: 2
-                }} variant={"h2"}>Favorites<StarIcon fontSize="inherit" sx={{color: yellow[600], ml: 3}}/></Typography>
-
-                <TablePagination
-                    component="div"
-                    count={100}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    rowsPerPage={rowsPerPage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                    sx={{
-                        ml: 0,
-                        display: "flex",
-                        '& .MuiToolbar-root': {
-                            paddingLeft: 0.5,
-                        }
-                    }}
-                />
-                <Divider sx={{marginBottom: 3}}/>
-
-                {/*TODO add column number change when going small (responsive)*/}
-                <CardMasonry numbers={numbers}/>
+                <Routes>
+                    <Route path="/favorites" element={<FavoritesPage/>}/>
+                    <Route path="/" element={<FavoritesPage/>}/>
+                </Routes>
             </Container>
 
         </SessionContextProvider>
