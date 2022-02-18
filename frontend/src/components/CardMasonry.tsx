@@ -1,23 +1,16 @@
 import React from "react";
 import Masonry from "@mui/lab/Masonry";
-import {ItemCard} from "./ItemCard";
-import {CategoryCard} from "./CategoryCard";
+import {IItemCardComponent} from "./ItemCard";
+import {ICategoryCardComponent} from "./CategoryCard";
 
 interface CardMasonryParams {
-    numbers: number[];
+    cards: (IItemCardComponent | ICategoryCardComponent)[]
 }
 
-export const CardMasonry = ({numbers}: CardMasonryParams) => {
-
+export const CardMasonry = ({cards}: CardMasonryParams) => {
     return (
         <Masonry>
-            {numbers.map((e, i) => {
-                if (i % 2 === 0) {
-                    return <ItemCard key={i} id={i} itemText={i + "text"} itemTitle="Title"/>
-                } else {
-                    return <CategoryCard key={i} id={i} categoryName={"Category"}/>
-                }
-            })}
+            {cards && React.Children.map(cards, e => e)}
         </Masonry>
     )
 }
