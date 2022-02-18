@@ -29,15 +29,15 @@ export const ItemCard = ({ id = 0, itemTitle, itemText="", itemAvailability=Avai
             />
             <CardContent>
                 <Typography variant="h5">{itemTitle}</Typography>
-                <Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>
+                {/*<Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>*/}
                     {itemText + itemAvailability.toString()}
                     {
                         [...Array(Math.round((Math.random() * 10) + 1.0))]
-                            .map(() => {
-                                return <Typography>{id}</Typography>
+                            .map((e,i) => {
+                                return <Typography key={i} sx={{fontSize: 14}} color="text.secondary" gutterBottom>{id}</Typography>
                             })
                     }
-                </Typography>
+                {/*</Typography>*/}
             </CardContent>
             <CardActions disableSpacing>
                 <IconButton aria-label="View user history">
