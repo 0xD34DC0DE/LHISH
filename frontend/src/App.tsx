@@ -1,39 +1,21 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import './App.css';
-import SessionContext, {SessionContextProvider} from "./contexts/SessionContext";
+import {SessionContextProvider} from "./contexts/SessionContext";
+import {UserPage} from "./pages/UserPage";
+import {LoginPage} from "./pages/LoginPage";
+import SessionSwitch, {SessionConditionalElement} from "./routing/SessionSwitch";
 
-
-interface ProtectedRouteProps {
-    requiresLoggedIn: boolean, // Find a way to make it a prop that doesn't require a value -> like the disabled prop
-    path: string,
-    role: string | string []
-    element: React.ReactNode
-}
-
-const ProtectedRoute = ({path}: ProtectedRouteProps) => {
-/*
-* TODO use <Routes>
-* then filter children of <Routes>
-* (instances of <Route> using ProtectedRouteProps) based on context role and login state)
-*/
-}
-
-const ProtectedRoutes: React.FunctionComponent = ({children}) => {
-    const {state, dispatch} = useContext(SessionContext);
-
-    return (
-        <>
-
-        </>
-    );
-}
+//TODO
+// Make non-renderable pages got to a 404 component by having ProtectedRoutes have a prop: PageNotFoundComponent
+// otherwise when a route is marked as requires logging false you can still navigate to it
 
 function App() {
     return (
         <SessionContextProvider>
-            <ProtectedRoutes>
-
-            </ProtectedRoutes>
+            <SessionSwitch devOverride={{login: false, role: ""}}>
+                <SessionConditionalElement element={<UserPage/>} loggedIn={true} roles={["user"]}/>
+                <SessionConditionalElement element={<LoginPage/>} loggedIn={false}/>
+            </SessionSwitch>
         </SessionContextProvider>
     );
 }
