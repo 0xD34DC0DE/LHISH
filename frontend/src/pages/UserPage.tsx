@@ -3,11 +3,13 @@ import {DrawerRef, MenuDrawer} from "../components/MenuDrawer";
 import {DrawerMenuItem} from "../components/DrawerMenuItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import {SearchBar} from "../components/SearchBar";
-import {Route, Routes, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import FavoritesPage from "./FavoritesPage";
 import CategoriesPage from "./CategoriesPage";
 import ItemsPage from "./ItemsPage";
 import React, {useRef} from "react";
+import {Route, Routes} from "react-router-dom";
+import NotFoundPage from "./NotFoundPage";
 
 export const UserPage = () => {
     const drawerRef = useRef<DrawerRef>(null);
@@ -64,12 +66,15 @@ export const UserPage = () => {
                 </Box>
             </AppBar>
             <Container>
+
                 <Routes>
                     <Route path="/favorites" element={<FavoritesPage/>}/>
                     <Route path="/categories" element={<CategoriesPage/>}/>
                     <Route path="/items" element={<ItemsPage/>}/>
                     <Route path="/" element={<FavoritesPage/>}/>
+                    <Route path="*" element={<NotFoundPage/>}/>
                 </Routes>
+
             </Container>
         </>
     );
