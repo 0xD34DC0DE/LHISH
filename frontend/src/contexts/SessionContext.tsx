@@ -51,7 +51,6 @@ interface AuxProps {
 export const SessionContextProvider = ({children}: AuxProps) => {
     const [session, dispatch] = useReducer(SessionContextReducer, {...initialState});
 
-
     return (
         <SessionContext.Provider value={{session: session, dispatch}}>
             {children}

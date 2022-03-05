@@ -72,7 +72,7 @@ export const UserPage = () => {
                     <Route path="/categories" element={<CategoriesPage/>}/>
                     <Route path="/items" element={<ItemsPage/>}/>
                     <Route path="/" element={<FavoritesPage/>}/>
-                    <Route path="*" element={<NotFoundPage/>}/>
+                    <Route path="" element={<NotFoundPage/>}/>
                 </Routes>
 
             </Container>
