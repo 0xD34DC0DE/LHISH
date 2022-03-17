@@ -1,4 +1,6 @@
 package dev.d34dc0de.lhish.view;
 
-public class UserAccountView {
+import dev.d34dc0de.lhish.model.enums.Role;
+
+public record UserAccountView (String id, String email, String username, Role role){
 }
