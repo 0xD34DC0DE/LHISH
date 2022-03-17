@@ -15,6 +15,10 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
+    public Account createAccount(Account account) {
+        return accountRepository.insert(account);
+    }
+
     public Optional<Account> findByUsernameAndPassword(String username, String password) {
         return accountRepository.findByUsernameAndPassword(username, password);
     }
@@ -22,4 +26,5 @@ public class AccountService {
     public Optional<Account> findByUsername(String username) {
         return accountRepository.findByUsername(username);
     }
+
 }
