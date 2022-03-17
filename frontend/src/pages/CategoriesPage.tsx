@@ -4,9 +4,14 @@ import {CardMasonry} from "../components/CardMasonry";
 import CardFactory from "../services/CardFactory";
 
 const CategoriesPage = () => {
+
+    const onAddButtonClick = () => {
+
+    }
+
     return (
         <>
-            <PageHeader title={"Categories"}/>
+            <PageHeader title={"Categories"} onAddButtonClick={onAddButtonClick}/>
 
             {/*TODO add column number change when going small (responsive)*/}
             <CardMasonry cards={CardFactory(10, ["category"])}/>
