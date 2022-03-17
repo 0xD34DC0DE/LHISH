@@ -1,11 +1,12 @@
 import {Avatar, Grid, Link, Typography} from "@mui/material";
 import React from "react";
+import { Link as RouterLink } from 'react-router-dom';
 
 interface QuickLoginSelectPageProps {
-    setUserId: (userId: string) => void
+    setUsername: (userId: string) => void
 }
 
-const QuickLoginSelectPage = ({setUserId}: QuickLoginSelectPageProps) => {
+const QuickLoginSelectPage = ({setUsername}: QuickLoginSelectPageProps) => {
 
     return (
         <>
@@ -20,23 +21,23 @@ const QuickLoginSelectPage = ({setUserId}: QuickLoginSelectPageProps) => {
                   sx={{marginTop: 4}}>
 
                 <Grid item>
-                    <Link href={"/authentication"} underline="none" color="inherit" onClick={() => setUserId("abc")}>
+                    <Link component={RouterLink} to={"/authentication"} underline="none" color="inherit" onClick={() => setUsername("test")}>
                         <Avatar sx={{width: 80, height: 80}}>A</Avatar>
                     </Link>
                 </Grid>
                 <Grid item>
-                    <Link href={"/authentication"} underline="none" color="inherit">
+                    <Link component={RouterLink} to={"/authentication"} underline="none" color="inherit">
                         <Avatar sx={{width: 80, height: 80}}>B</Avatar>
                     </Link>
                 </Grid>
                 <Grid item>
-                    <Link href={"/authentication"} underline="none" color="inherit">
+                    <Link component={RouterLink} to={"/authentication"} underline="none" color="inherit">
                         <Avatar sx={{width: 80, height: 80}}>C</Avatar>
                     </Link>
                 </Grid>
             </Grid>
             <Grid item textAlign={"center"} sx={{marginTop: 6}}>
-                <Link href={"/login"}>My account is no listed</Link>
+                <Link component={RouterLink} to={"/login"}>My account is no listed</Link>
             </Grid>
         </>
     );

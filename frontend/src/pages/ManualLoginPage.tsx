@@ -1,7 +1,34 @@
 import {Avatar, Button, Grid, Link, TextField, Typography} from "@mui/material";
-import React from "react";
+import React, {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {checkUsernameExists} from "../services/SessionService";
 
-export const ManualLoginPage = () => {
+interface ManualLoginPageProps {
+    username: string,
+    setUsername: (userId: string) => void
+}
+
+export const ManualLoginPage = ({username, setUsername}: ManualLoginPageProps) => {
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
+
+    const onUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setUsername(event.target.value);
+        if (error) {
+            setError("");
+        }
+    }
+
+    const onSubmit = () => {
+        checkUsernameExists(username).then(exits => {
+            if(exits) {
+                navigate("/authentication");
+                return;
+            }
+            setError("Username doesn't exists");
+        })
+    }
+
     return (
         <>
             <Grid item textAlign={"center"}>
@@ -20,12 +47,13 @@ export const ManualLoginPage = () => {
                     label="Username"
                     type="text"
                     autoComplete="current-password"
+                    onChange={onUsernameChange}
+                    error={error != ""}
+                    helperText={error}
                 />
             </Grid>
             <Grid item container direction={"row"} justifyContent={"center"} sx={{marginTop: 4}}>
-                <Link href={"/register"}>
-                    <Button variant={"contained"}>Continue</Button>
-                </Link>
+                    <Button onClick={onSubmit} variant={"contained"}>Continue</Button>
             </Grid>
 
             <Grid item textAlign={"center"} sx={{marginTop: 5}}>
