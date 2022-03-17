@@ -7,13 +7,15 @@ import {useNavigate} from "react-router-dom";
 import FavoritesPage from "./FavoritesPage";
 import CategoriesPage from "./CategoriesPage";
 import ItemsPage from "./ItemsPage";
-import React, {useRef} from "react";
+import React, {useContext, useRef} from "react";
 import {Route, Routes} from "react-router-dom";
 import NotFoundPage from "./NotFoundPage";
+import SessionContext from "../contexts/SessionContext";
 
 export const UserPage = () => {
     const drawerRef = useRef<DrawerRef>(null);
     const navigate = useNavigate();
+    const {session, dispatch} = useContext(SessionContext);
 
     const openDrawer = () => {
         if (drawerRef.current) {
@@ -30,6 +32,11 @@ export const UserPage = () => {
     const navigate_to = (path: string) => {
         closeDrawer();
         navigate(path);
+    }
+
+    const logout = () => {
+        dispatch({type: "logout"});
+        navigate("/");
     }
 
     return (
@@ -58,8 +65,8 @@ export const UserPage = () => {
                             }}/>
                         </Box>
 
-                        <IconButton>
-                            <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg"/>
+                        <IconButton onClick={logout}>
+                            <Avatar alt={session.username} src="/static/images/avatar/2.jpg"/>
                         </IconButton>
 
                     </Toolbar>
