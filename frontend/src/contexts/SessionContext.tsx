@@ -1,8 +1,11 @@
 import React, {createContext, ReactChild, ReactChildren, useReducer} from "react";
+import axios from "axios";
+import {authenticate, decodeJwt} from "../services/SessionService";
 
 interface SessionContextState {
     user_id: string,
     username: string,
+    email: string
     role: string;
     token: string,
     loggedIn: boolean,
@@ -11,24 +14,35 @@ interface SessionContextState {
 const initialState: SessionContextState = {
     user_id: "",
     username: "",
+    email: "",
     role: "",
     token: "",
     loggedIn: false,
 }
 
 type Action =
-    | { type: "login", userId: string, password: string } // Can have objects after like the new state -> { type: 'login', new state}
+    | { type: "login", token: string } // Can have objects after like the new state -> { type: 'login', new state}
     | { type: "logout" }
     | { type: "refresh" };
 
 function SessionContextReducer(session: SessionContextState, action: Action): SessionContextState {
     switch (action.type) {
         case "login":
-            return {...session, loggedIn: true, role: "user"}
+            sessionStorage.setItem("jwt", action.token);
+            if (action.token != "") {
+                return {...session, loggedIn: true, ...decodeJwt(action.token)};
+            } else {
+                return {...initialState, loggedIn: false};
+            }
         case "logout":
-            return {...session, loggedIn: false}
+            sessionStorage.setItem("jwt", "");
+            return {...initialState}
         case "refresh":
-            return session
+            const token = sessionStorage.getItem("jwt");
+            if (token && token != "") {
+                return {...session, loggedIn: true, ...decodeJwt(token)};
+            }
+            return {...initialState}
     }
 }
 
