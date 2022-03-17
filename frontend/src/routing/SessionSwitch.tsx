@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect} from "react";
 import SessionContext from "../contexts/SessionContext";
 
 
@@ -19,6 +19,10 @@ interface SessionSwitchProps {
 
 const SessionSwitch = ({children, devOverride}: SessionSwitchProps) => {
     const {session} = useContext(SessionContext);
+
+    useEffect(() => {
+        console.log(session)
+    }, [session]);
 
     const filterChildren = (children: React.ReactNode): React.ReactNode[] => {
         let filteredChildren: React.ReactElement[] = [];
