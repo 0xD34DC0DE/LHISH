@@ -12,8 +12,8 @@ import SessionSwitch, {SessionConditionalElement} from "./routing/SessionSwitch"
 function App() {
     return (
         <SessionContextProvider>
-            <SessionSwitch devOverride={{login: true, role: "user"}}>
-                <SessionConditionalElement element={<UserPage/>} loggedIn={true} roles={["user"]}/>
+            <SessionSwitch>
+                <SessionConditionalElement element={<UserPage/>} loggedIn={true} roles={["USER"]}/>
                 <SessionConditionalElement element={<LoginPage/>} loggedIn={false}/>
             </SessionSwitch>
         </SessionContextProvider>
