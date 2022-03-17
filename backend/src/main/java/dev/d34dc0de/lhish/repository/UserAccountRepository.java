@@ -1,14 +1,13 @@
 package dev.d34dc0de.lhish.repository;
 
-import dev.d34dc0de.lhish.model.Account;
+import dev.d34dc0de.lhish.model.UserAccount;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UserAccountRepository extends MongoRepository<Account, String> {
-    Optional<Account> findByUsernameAndPassword(String username, String password);
+public interface UserAccountRepository extends MongoRepository<UserAccount, String> {
 
-    Optional<Account> findByUsername(String username);
+    Optional<UserAccount> findByUsername(String username);
 }
