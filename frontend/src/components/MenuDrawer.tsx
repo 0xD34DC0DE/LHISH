@@ -1,13 +1,13 @@
 import React, {useState, forwardRef, useImperativeHandle} from "react";
 import {Box, List, Drawer} from "@mui/material";
 
-export type DrawerRef = {
+export interface DrawerRef {
     openDrawer: () => void,
     closeDrawer: () => void
 }
 
-type DrawerProps = {
-    children?: React.ReactNode | React.ReactNode[] | null
+interface DrawerProps {
+    children?: React.ReactNode | React.ReactNode[] | null;
 }
 
 export const MenuDrawer = forwardRef<DrawerRef, DrawerProps>(({children}, ref) => {

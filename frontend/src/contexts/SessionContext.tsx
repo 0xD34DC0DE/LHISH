@@ -1,42 +1,58 @@
 import React, {createContext, ReactChild, ReactChildren, useReducer} from "react";
+import axios from "axios";
+import {authenticate, decodeJwt} from "../services/SessionService";
 
 interface SessionContextState {
-    username: string,
     user_id: string,
+    username: string,
+    email: string
+    role: string;
     token: string,
     loggedIn: boolean,
 }
 
 const initialState: SessionContextState = {
-    username: "",
     user_id: "",
+    username: "",
+    email: "",
+    role: "",
     token: "",
     loggedIn: false,
 }
 
 type Action =
-    | { type: "login" } // Can have objects after like the new state -> { type: 'login', new state}
+    | { type: "login", token: string } // Can have objects after like the new state -> { type: 'login', new state}
     | { type: "logout" }
     | { type: "refresh" };
 
-function SessionContextReducer(state: SessionContextState, action: Action): SessionContextState {
+function SessionContextReducer(session: SessionContextState, action: Action): SessionContextState {
     switch (action.type) {
         case "login":
-            return {...state, loggedIn: true}
+            sessionStorage.setItem("jwt", action.token);
+            if (action.token != "") {
+                return {...session, loggedIn: true, ...decodeJwt(action.token)};
+            } else {
+                return {...initialState, loggedIn: false};
+            }
         case "logout":
-            return {...state, loggedIn: false}
+            sessionStorage.setItem("jwt", "");
+            return {...initialState}
         case "refresh":
-            return state
+            const token = sessionStorage.getItem("jwt");
+            if (token && token != "") {
+                return {...session, loggedIn: true, ...decodeJwt(token)};
+            }
+            return {...initialState}
     }
 }
 
 type SessionContextProviderType = {
-    state: SessionContextState,
+    session: SessionContextState,
     dispatch: React.Dispatch<Action>
 }
 
 const SessionContext = createContext<SessionContextProviderType>({
-    state: initialState,
+    session: initialState,
     dispatch: () => null
 });
 
@@ -47,11 +63,10 @@ interface AuxProps {
 }
 
 export const SessionContextProvider = ({children}: AuxProps) => {
-    const [state, dispatch] = useReducer(SessionContextReducer, {...initialState});
-
+    const [session, dispatch] = useReducer(SessionContextReducer, {...initialState});
 
     return (
-        <SessionContext.Provider value={{state, dispatch}}>
+        <SessionContext.Provider value={{session: session, dispatch}}>
             {children}
         </SessionContext.Provider>
     );
