@@ -21,15 +21,15 @@ export const CategoryCard : ICategoryCardComponent & React.FunctionComponent<ICa
             />
             <CardContent>
                 <Link href="#" underline={"none"} color={"inherit"}>
-                    <Typography variant="h5"
+                    <Typography paragraph variant="h5"
                                 sx={{alignContent: "top"}}>{name}<SuperscriptLinkIcon/></Typography>
                 </Link>
-                <Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>
+                <Typography paragraph sx={{fontSize: 14}} color="text.secondary" gutterBottom>
                     Category
                 </Typography>
             </CardContent>
             <CardActions disableSpacing>
-                <IconButton aria-label="Localize" sx={{marginLeft: "auto"}}>
+                <IconButton aria-label="Localize" sx={{marginLeft: "auto" }}>
                     <ClearIcon/>
                 </IconButton>
             </CardActions>
