@@ -9,41 +9,35 @@ export interface CreateCategoryDialogProps {
 }
 
 export const CreateCategoryDialog = ({innerRef}: CreateCategoryDialogProps) => {
-    const [categoryName, setCategoryName] = useState("Category namewwwwwwwww");
+    const [categoryName, setCategoryName] = useState("Category name");
     const [description, setDescription] = useState("");
+    const [file, setFile] = useState<File>();
 
     return (
-        <DialogBase ref={innerRef} fullWidth maxWidth={"md"}>
+        <DialogBase ref={innerRef} fullWidth maxWidth={"sm"}>
             <DialogTitle>Create Category</DialogTitle>
             <DialogContent>
-                <Grid container direction={"row"} spacing={2}>
-                    <Grid item>
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="name"
-                            label="Category Name"
-                            type="text"
-                            fullWidth
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCategoryName(e.target.value)}
-                        />
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    label="Category Name"
+                    type="text"
+                    fullWidth
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCategoryName(e.target.value)}
+                />
 
-                        <TextField
-                            margin="dense"
-                            id="name"
-                            label="Description"
-                            type="text"
-                            fullWidth
-                            multiline
-                            rows={4}
-                        />
-                        <FileUploadButton/>
-                    </Grid>
-                    <Grid item>
-                        <Typography sx={{marginTop: .5}}>Preview:</Typography>
-                        <CategoryCard id={"0"} name={categoryName}/>
-                    </Grid>
-                </Grid>
+                <TextField
+                    margin="dense"
+                    id="name"
+                    label="Description"
+                    type="text"
+                    fullWidth
+                    multiline
+                    rows={4}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
+                />
+                <FileUploadButton onFileChanged={setFile} accept={"image/*"} id={"image-upload"}/>
             </DialogContent>
         </DialogBase>
     );
