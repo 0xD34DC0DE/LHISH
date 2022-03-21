@@ -1,4 +1,4 @@
-import React, {createContext, ReactChild, ReactChildren, useReducer} from "react";
+import React, {createContext, ReactChild, ReactChildren, useEffect, useReducer} from "react";
 import axios from "axios";
 import {authenticate, decodeJwt} from "../services/SessionService";
 
@@ -64,6 +64,10 @@ interface AuxProps {
 
 export const SessionContextProvider = ({children}: AuxProps) => {
     const [session, dispatch] = useReducer(SessionContextReducer, {...initialState});
+
+    useEffect(() => {
+        dispatch({type: "refresh"});
+    }, []);
 
     return (
         <SessionContext.Provider value={{session: session, dispatch}}>
