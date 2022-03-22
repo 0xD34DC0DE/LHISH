@@ -62,7 +62,7 @@ const LoginPasswordPage = ({username}: LoginPasswordPageProps) => {
                         type="password"
                         autoComplete="current-password"
                         onChange={onPasswordChange}
-                        error={error != ""}
+                        error={error !== ""}
                         helperText={error}
                     />
                 </Grid>
