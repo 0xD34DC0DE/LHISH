@@ -1,8 +1,8 @@
 import DialogBase, {DialogBaseRef} from "./DialogBase"
-import {Box, Button, DialogContent, DialogTitle, Grid, TextField, Typography} from "@mui/material";
+import {Button, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
 import React, {useState} from "react";
 import {FileUploadButton} from "./FileUploadButton";
-import {CategoryCard} from "./CategoryCard";
+import {useGet, usePost} from "../hooks/QueryHooks";
 
 export interface CreateCategoryDialogProps {
     innerRef: React.ForwardedRef<DialogBaseRef>;
@@ -12,6 +12,13 @@ export const CreateCategoryDialog = ({innerRef}: CreateCategoryDialogProps) => {
     const [categoryName, setCategoryName] = useState("Category name");
     const [description, setDescription] = useState("");
     const [file, setFile] = useState<File>();
+
+
+    const method = () => {
+        return "aaa";
+    }
+    const [post, data, error, reset] = usePost("http://localhost:8080/", ["1", method],["3", 4])
+
 
     return (
         <DialogBase ref={innerRef} fullWidth maxWidth={"sm"}>
@@ -37,8 +44,14 @@ export const CreateCategoryDialog = ({innerRef}: CreateCategoryDialogProps) => {
                     rows={4}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
                 />
+
                 <FileUploadButton onFileChanged={setFile} accept={"image/*"} id={"image-upload"}/>
+
             </DialogContent>
+
+            <DialogActions>
+                <Button onClick={()=> post(["", 3])}>Create</Button>
+            </DialogActions>
         </DialogBase>
     );
 };
