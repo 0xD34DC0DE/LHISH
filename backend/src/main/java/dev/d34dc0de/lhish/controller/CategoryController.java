@@ -41,9 +41,4 @@ public class CategoryController extends BaseController {
                         .map(CategoryViewFactory::toView).toList()
         );
     }
-
-    @GetMapping("/test")
-    private ResponseEntity<String> getUserAccountView(@AuthenticationPrincipal Account principal) {
-        return ResponseEntity.status(HttpStatus.OK).build();
-    }
 }
