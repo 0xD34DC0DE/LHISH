@@ -7,10 +7,10 @@ import {green, red} from "@mui/material/colors";
 
 export interface CreateItemDialogProps {
     innerRef: React.ForwardedRef<DialogBaseRef>;
-    onCategoryCreated: () => void;
+    onItemCreated: () => void;
 }
 
-export const CreateCategoryDialog = ({innerRef, onCategoryCreated}: CreateItemDialogProps) => {
+export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProps) => {
     const [itemName, setItemName] = useState("Item name");
     const [description, setDescription] = useState("");
     const [file, setFile] = useState<File>();
