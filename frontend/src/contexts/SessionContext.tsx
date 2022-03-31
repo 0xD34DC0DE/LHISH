@@ -1,6 +1,5 @@
 import React, {createContext, ReactChild, ReactChildren, useEffect, useReducer} from "react";
-import axios from "axios";
-import {authenticate, decodeJwt} from "../services/SessionService";
+import {decodeJwt} from "../services/SessionService";
 
 interface SessionContextState {
     user_id: string,
@@ -29,8 +28,8 @@ function SessionContextReducer(session: SessionContextState, action: Action): Se
     switch (action.type) {
         case "login":
             sessionStorage.setItem("jwt", action.token);
-            if (action.token != "") {
-                return {...session, loggedIn: true, ...decodeJwt(action.token)};
+            if (action.token !== "") {
+                return {...session, loggedIn: true, ...decodeJwt(action.token), token: action.token};
             } else {
                 return {...initialState, loggedIn: false};
             }
@@ -39,8 +38,8 @@ function SessionContextReducer(session: SessionContextState, action: Action): Se
             return {...initialState}
         case "refresh":
             const token = sessionStorage.getItem("jwt");
-            if (token && token != "") {
-                return {...session, loggedIn: true, ...decodeJwt(token)};
+            if (token && token !== "") {
+                return {...session, loggedIn: true, ...decodeJwt(token), token};
             }
             return {...initialState}
     }
