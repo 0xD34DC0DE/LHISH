@@ -47,6 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/authenticate", "/user/register", "/user/exists").permitAll()
                 .antMatchers("/user/*").hasAuthority("USER")
                 .antMatchers("/admin/*").hasAuthority("ADMIN")
+                .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint);
