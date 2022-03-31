@@ -1,17 +1,32 @@
-import React, {useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {PageHeader} from "../components/PageHeader";
 import {CardMasonry} from "../components/CardMasonry";
-import CardFactory from "../services/CardFactory";
 import {DialogBaseRef} from "../components/DialogBase";
 import {CreateCategoryDialog} from "../components/CreateCategoryDialog";
+import ICategory from "../models/CategoryModel";
+import {CategoryCard} from "../components/CategoryCard";
+import {useAuthGet} from "../hooks/QueryHooks";
 
 const CategoriesPage = () => {
     const dialogRef = useRef<DialogBaseRef>(null);
+    const [get, categories, error, reset] = useAuthGet<ICategory[]>("http://localhost:8080/category/all");
+
+    useEffect(() => {
+        get();
+    }, []);
 
     const onAddButtonClick = () => {
-        if (dialogRef.current) {
-            dialogRef.current.openDialog()
-        }
+       dialogRef.current?.openDialog();
+    }
+
+    const mapCategories = (categories: ICategory[]) => {
+        return categories.map(category => {
+            return <CategoryCard {...category} key={category.id}/>
+        });
+    }
+
+    const onCategoryCreated = () => {
+        reset();
     }
 
     return (
@@ -19,8 +34,8 @@ const CategoriesPage = () => {
             <PageHeader title={"Categories"} onAddButtonClick={onAddButtonClick}/>
 
             {/*TODO add column number change when going small (responsive)*/}
-            <CardMasonry cards={CardFactory(10, ["category"])}/>
-            <CreateCategoryDialog innerRef={dialogRef}/>
+            <CardMasonry cards={mapCategories(categories ?? [])}/>
+            <CreateCategoryDialog onCategoryCreated={onCategoryCreated} innerRef={dialogRef}/>
         </>
     );
 };
