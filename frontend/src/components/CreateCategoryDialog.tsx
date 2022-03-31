@@ -1,24 +1,32 @@
 import DialogBase, {DialogBaseRef} from "./DialogBase"
-import {Button, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
-import React, {useState} from "react";
+import {Box, Button, DialogActions, DialogContent, DialogTitle, TextField, Typography} from "@mui/material";
+import React, {useEffect, useState} from "react";
 import {FileUploadButton} from "./FileUploadButton";
-import {useGet, usePost} from "../hooks/QueryHooks";
+import {useAuthFormPost, useAuthGet, useAuthPost} from "../hooks/QueryHooks";
+import {green, red} from "@mui/material/colors";
 
 export interface CreateCategoryDialogProps {
     innerRef: React.ForwardedRef<DialogBaseRef>;
+    onCategoryCreated: () => void;
 }
 
-export const CreateCategoryDialog = ({innerRef}: CreateCategoryDialogProps) => {
+export const CreateCategoryDialog = ({innerRef, onCategoryCreated}: CreateCategoryDialogProps) => {
     const [categoryName, setCategoryName] = useState("Category name");
     const [description, setDescription] = useState("");
     const [file, setFile] = useState<File>();
 
+    const [postForm, data, error, reset] = useAuthFormPost(
+        "http://localhost:8080/category/create"
+    );
 
-    const method = () => {
-        return "aaa";
+    const onSubmit = () => {
+        if(!file) return;
+        postForm(
+            ["name", categoryName],
+            ["description", description],
+            ["image", file]
+        );
     }
-    const [post, data, error, reset] = usePost("http://localhost:8080/", ["1", method],["3", 4])
-
 
     return (
         <DialogBase ref={innerRef} fullWidth maxWidth={"sm"}>
@@ -46,12 +54,17 @@ export const CreateCategoryDialog = ({innerRef}: CreateCategoryDialogProps) => {
                 />
 
                 <FileUploadButton onFileChanged={setFile} accept={"image/*"} id={"image-upload"}/>
-
             </DialogContent>
 
             <DialogActions>
-                <Button onClick={()=> post(["", 3])}>Create</Button>
+                <Box sx={{marginLeft: 2, marginRight: "auto"}}>
+                    {data && <Typography sx={{color: green[500]}}>Category: {categoryName} created</Typography>}
+                    {error && <Typography sx={{color: red[500]}}>Could not create category
+                        "{categoryName}" <br/>Reason: {error}</Typography>}
+                </Box>
+                <Button onClick={onSubmit}>Create</Button>
             </DialogActions>
+
         </DialogBase>
     );
 };
