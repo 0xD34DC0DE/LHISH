@@ -2,3 +2,11 @@
 jwt:
   issuer: "dev.d34dc0de.jwt"
   secret: 817d36fe69ed1ee6101eae94d57b0358
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 16MB
+      max-request-size: 16MB
+  session:
+    persistent: false
