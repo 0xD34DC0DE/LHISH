@@ -9,10 +9,6 @@ import ManualLoginPage from "./ManualLoginPage";
 export const LoginPage = () => {
     const [username, setUsername] = useState("");
 
-    useEffect(() => {
-        console.log(username);
-    }, [username]);
-
     return (
         <Routes>
             <Route path="/" element={<LoginContainer><QuickLoginSelectPage setUsername={setUsername}/></LoginContainer>}/>

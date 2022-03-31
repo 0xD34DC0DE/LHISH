@@ -7,7 +7,12 @@ import dev.d34dc0de.lhish.view.UserAccountView;
 public abstract class UserAccountViewFactory {
 
     public static UserAccountView toView(UserAccount account) {
-        return new UserAccountView(account.getId(),account.getEmail(), account.getUsername(), account.getRole());
+        return UserAccountView.builder()
+                .id(account.getId())
+                .email(account.getEmail())
+                .username(account.getUsername())
+                .role(account.getRole())
+                .build();
     }
 
 }

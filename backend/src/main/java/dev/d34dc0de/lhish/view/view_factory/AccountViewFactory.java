@@ -6,7 +6,11 @@ import dev.d34dc0de.lhish.view.AccountView;
 public abstract class AccountViewFactory {
 
     public static AccountView toView(Account account) {
-        return new AccountView(account.getId(), account.getUsername(), account.getRole());
+        return AccountView.builder()
+                .id(account.getId())
+                .username(account.getUsername())
+                .role(account.getRole())
+                .build();
     }
 
 }

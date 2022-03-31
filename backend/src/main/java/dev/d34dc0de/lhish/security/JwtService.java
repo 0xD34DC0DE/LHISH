@@ -16,7 +16,6 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.fasterxml.jackson.databind.type.LogicalType.DateTime;
 import static java.time.ZoneOffset.UTC;
 
 @Component
@@ -31,7 +30,12 @@ public class JwtService implements Clock {
     private String secret;
 
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(secret).setClock(this).parseClaimsJws(token).getBody();
+        try {
+            return Jwts.parser().setSigningKey(secret).setClock(this).parseClaimsJws(token).getBody();
+        } catch (MalformedJwtException e) {
+            logger.log(Level.INFO, "Malformed JWT token");
+            throw e;
+        }
     }
 
     public String getIdFromToken(String token) {
