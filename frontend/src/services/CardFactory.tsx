@@ -10,6 +10,7 @@ const CardFactory = (cardCount: number = 1, cardType: string[]): (IItemCardCompo
             id: i.toString(),
             name: "Item " + i.toString(),
             description: "Description of #" + i.toString(),
+            imageId: "",
             availability: Availability.Available
         }}/>
     }
