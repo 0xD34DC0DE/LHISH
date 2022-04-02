@@ -10,7 +10,6 @@ import dev.d34dc0de.lhish.service.CategoryService;
 import dev.d34dc0de.lhish.service.ImageService;
 import dev.d34dc0de.lhish.view.CategoryView;
 import dev.d34dc0de.lhish.view.view_factory.CategoryViewFactory;
-import io.vavr.control.Try;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -51,8 +50,14 @@ public class CategoryController extends BaseController {
     @GetMapping("/all")
     private ResponseEntity<List<CategoryView>> getAll() {
         return ResponseEntity.ok(
-                categoryService.findAll().stream()
-                        .map(CategoryViewFactory::toView).toList()
+                CategoryViewFactory.toCategoryListView(categoryService.findAll()).categories()
+        );
+    }
+
+    @GetMapping("/all/ids")
+    private ResponseEntity<List<String>> getAllIds() {
+        return ResponseEntity.ok(
+                CategoryViewFactory.toCategoryIdListView(categoryService.findAll()).categoryIds()
         );
     }
 }
