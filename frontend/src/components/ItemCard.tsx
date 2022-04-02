@@ -9,14 +9,14 @@ export interface IItemCardComponent {
 }
 
 export const ItemCard: IItemCardComponent & React.FunctionComponent<IItem> =
-    ({id, name, description, availability}:IItem) => {
+    ({id, name, description, imageId, availability}:IItem) => {
 
         return (
             <Card variant="outlined" sx={{borderRadius: 2, borderWidth: 2, borderColor: "#a1a1a1"}}>
                 <CardMedia
                     component="img"
                     height="140"
-                    image={`https://picsum.photos/id/${parseInt(id) * 100}/200/140`}
+                    image={`http://localhost:8080/image/${imageId}`} // TODO replace with getImageUrl for authentication
                 />
                 <CardContent>
                     <Typography variant="h5">{name}</Typography>
