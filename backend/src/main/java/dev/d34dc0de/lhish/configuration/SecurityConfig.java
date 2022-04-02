@@ -33,7 +33,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
     }
 
-    // ...
     @Override
     public void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(jwtAuthenticationProvider);
@@ -44,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.cors();
         http.authorizeRequests()
-                .antMatchers("/authenticate", "/user/register", "/user/exists").permitAll()
+                .antMatchers("/authenticate", "/user/register", "/user/exists", "/image/*").permitAll()
                 .antMatchers("/user/*").hasAuthority("USER")
                 .antMatchers("/admin/*").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
