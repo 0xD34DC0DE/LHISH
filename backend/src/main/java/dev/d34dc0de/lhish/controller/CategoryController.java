@@ -30,7 +30,7 @@ public class CategoryController extends BaseController {
                                                @ModelAttribute CategoryCreationForm categoryCreationForm) {
         return Try.of(() -> CategoryModelFactory.toModel(categoryCreationForm, principal.getId()))
                 .onSuccess(categoryService::insert)
-                .map(c -> ResponseEntity.ok(APIResponse.ok("Category created successfully")))
+                .map(c -> APIOk("Category created successfully"))
                 .getOrElseThrow(getRethrowFunction());
     }
 
