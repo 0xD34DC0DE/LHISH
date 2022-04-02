@@ -5,10 +5,10 @@ import dev.d34dc0de.lhish.form.model_factory.ImageModelFactory;
 import dev.d34dc0de.lhish.form.model_factory.ItemModelFactory;
 import dev.d34dc0de.lhish.model.Account;
 import dev.d34dc0de.lhish.model.Image;
-import dev.d34dc0de.lhish.model.Item;
 import dev.d34dc0de.lhish.response.APIResponse;
 import dev.d34dc0de.lhish.service.ImageService;
 import dev.d34dc0de.lhish.service.ItemService;
+import dev.d34dc0de.lhish.view.ItemListView;
 import dev.d34dc0de.lhish.view.ItemView;
 import dev.d34dc0de.lhish.view.view_factory.ItemViewFactory;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +48,8 @@ public class ItemController extends BaseController {
 
     @GetMapping("/all")
     private ResponseEntity<List<ItemView>> getAll() {
-        return ResponseEntity.ok(itemService.getAll().stream().map(ItemViewFactory::toView).toList());
+        return ResponseEntity.ok(
+                ItemViewFactory.toItemListView(itemService.getAll()).items()
+        );
     }
 }
