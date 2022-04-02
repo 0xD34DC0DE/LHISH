@@ -37,10 +37,8 @@ public class ItemController extends BaseController {
     private ResponseEntity<APIResponse> create(@AuthenticationPrincipal Account principal,
                                                @ModelAttribute ItemCreationForm itemCreationForm) {
         try {
-            Image image = ImageModelFactory.toModel(itemCreationForm.image());
-            image = imageService.insert(image);
-            Item item = ItemModelFactory.toModel(itemCreationForm, principal.getId(), image.getId());
-            itemService.insert(item);
+            Image image = imageService.insert(ImageModelFactory.toModel(itemCreationForm.image()));
+            itemService.insert(ItemModelFactory.toModel(itemCreationForm, principal.getId(), image.getId()));
             return APIOk("Item created successfully");
         } catch (IOException e) {
             logger.error("Error while creating image", e);
