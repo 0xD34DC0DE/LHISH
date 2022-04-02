@@ -13,16 +13,12 @@ import java.io.IOException;
 
 public abstract class ItemModelFactory {
 
-    private static final long MAX_FILE_SIZE = 16_777_216; // 16 MB
 
-    public static Item toModel(ItemCreationForm itemCreationForm, String userId) throws IOException {
 
-        if(itemCreationForm.image() == null) {
+    public static Item toModel(ItemCreationForm itemCreationForm, String userId, String imageId) throws IOException {
+
+        if(imageId == null) {
             throw new NullFieldException("Image cannot be null");
-        }
-
-        if (itemCreationForm.image().getBytes().length >= MAX_FILE_SIZE) {
-            throw new FileSizeLimitException("File size limit of 16MB exceeded");
         }
 
         return Item.builder()
@@ -30,7 +26,7 @@ public abstract class ItemModelFactory {
                 .categoryId(itemCreationForm.categoryId())
                 .name(itemCreationForm.name())
                 .description(itemCreationForm.description())
-                .image(new Binary(itemCreationForm.image().getBytes()))
+                .imageId(imageId)
                 .build();
     }
 }
