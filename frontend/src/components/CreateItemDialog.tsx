@@ -17,6 +17,7 @@ import React, {useEffect, useState} from "react";
 import {FileUploadButton} from "./FileUploadButton";
 import {useAuthFormPost, useAuthGet} from "../hooks/QueryHooks";
 import {green, red} from "@mui/material/colors";
+import {CategoryIdNamePairListView} from "../models/CategoryIdNamePairListView";
 
 export interface CreateItemDialogProps {
     innerRef: React.ForwardedRef<DialogBaseRef>;
@@ -29,17 +30,22 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
     const [category, setCategory] = useState("");
     const [file, setFile] = useState<File>();
 
-    const [postForm, formData, formError] = useAuthFormPost(
+    const [postForm, formData, formError, formReset] = useAuthFormPost(
         "http://localhost:8080/item/create"
     );
 
-    const [getCategoryIds, categoryIds, categoryIdsError] = useAuthGet<string[]>(
-        "http://localhost:8080/category/all/ids"
-    );
+    const [getCategoryIdNamePairs, categoryIdNamePairs, categoryIdNamePairsError, categoryIdNamePairsReset] =
+        useAuthGet<CategoryIdNamePairListView>(
+            "http://localhost:8080/category/all/ids"
+        );
 
     useEffect(() => {
-        if (!categoryIds) {
-            getCategoryIds();
+        if (!categoryIdNamePairs) {
+            getCategoryIdNamePairs();
+        }
+        if(formError || categoryIdNamePairsError) {
+            formReset();
+            categoryIdNamePairsReset();
         }
     }, []);
 
@@ -50,6 +56,25 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
             ["description", description],
             ["image", file]
         );
+    }
+
+    const buildSelect = () => {
+        if (!categoryIdNamePairs) return null;
+        return <Select
+            labelId="category-id-select-label"
+            id="category-id-select"
+            value={category}
+            label="Category"
+            onChange={(e: SelectChangeEvent) => setCategory(e.target.value)}
+        >
+            {categoryIdNamePairs.categoryIds
+                .map((k, i) =>
+                    [k, categoryIdNamePairs.categoryNames[i]] // zip id and category name
+                )
+                .map(pair => (
+                    <MenuItem key={pair[0]} value={pair[0]}>{pair[1]}</MenuItem>
+                ))}
+        </Select>;
     }
 
     return (
@@ -78,17 +103,7 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
                 />
                 <FormControl fullWidth>
                     <InputLabel id="category-id-select-label">Category</InputLabel>
-                    <Select
-                        labelId="category-id-select-label"
-                        id="category-id-select"
-                        value={category}
-                        label="Category"
-                        onChange={(e: SelectChangeEvent) => setCategory(e.target.value)}
-                    >
-                        {categoryIds && categoryIds.map(id => (
-                            <MenuItem key={id} value={id}>{id}</MenuItem>
-                        ))}
-                    </Select>
+                    {buildSelect()}
                 </FormControl>
                 <FileUploadButton onFileChanged={setFile} accept={"image/*"} id={"image-upload"}/>
             </DialogContent>
@@ -98,12 +113,11 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
                     {formData && <Typography sx={{color: green[500]}}>Item: {itemName} created</Typography>}
                     {formError && <Typography sx={{color: red[500]}}>Could not create item
                         "{itemName}" <br/>Reason: {formError}</Typography>}
-                    {categoryIdsError && <Typography sx={{color: red[500]}}>Could not create item
+                    {categoryIdNamePairsError && <Typography sx={{color: red[500]}}>Could not create item
                         "{itemName}" <br/>Reason: {formError}</Typography>}
                 </Box>
-                <Button disabled={categoryIdsError != null} onClick={onSubmit}>Create</Button>
+                <Button disabled={categoryIdNamePairsError != null} onClick={onSubmit}>Create</Button>
             </DialogActions>
 
-        </DialogBase>
-    );
-};
+        </DialogBase>)
+}
