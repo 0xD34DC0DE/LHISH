@@ -6,7 +6,7 @@ import ICategory from "../models/CategoryView";
 
 export interface ICategoryCardComponent {}
 
-export const CategoryCard : ICategoryCardComponent & React.FunctionComponent<ICategory> = ({name, description, imageId}: ICategory) => {
+export const CategoryCard : ICategoryCardComponent & React.FunctionComponent<ICategory> = ({id, name, description, imageId}: ICategory) => {
 
     const SuperscriptLinkIcon = () => {
         return <LaunchIcon sx={{marginLeft: 0.5, marginBottom: 1, fontSize: 12}}/>;
@@ -20,7 +20,7 @@ export const CategoryCard : ICategoryCardComponent & React.FunctionComponent<ICa
                 image={`http://localhost:8080/image/${imageId}`}
             />
             <CardContent>
-                <Link href="#" underline={"none"} color={"inherit"}>
+                <Link href={`/items/category/${id}`} underline={"none"} color={"inherit"}>
                     <Typography paragraph variant="h5"
                                 sx={{alignContent: "top", marginBottom: 0}}>{name}<SuperscriptLinkIcon/></Typography>
                 </Link>
