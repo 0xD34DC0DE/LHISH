@@ -17,6 +17,10 @@ public class ItemHistoryService {
     }
 
     public ItemHistory insert(ItemHistory itemHistory) {
+        return itemHistoryRepository.insert(itemHistory);
+    }
+
+    public ItemHistory update(ItemHistory itemHistory) {
         return itemHistoryRepository.save(itemHistory);
     }
 
@@ -36,5 +40,11 @@ public class ItemHistoryService {
      */
     public ItemHistory getById(String id) {
         return itemHistoryRepository.findById(id).orElseThrow(() -> new NotFoundException("ItemHistory", id));
+    }
+
+    public ItemHistory addItemHistoryEntry(String id, ItemHistory.ItemHistoryEntry itemHistoryEntry) {
+        ItemHistory itemHistory = getById(id);
+        itemHistory.getEntries().add(itemHistoryEntry);
+        return update(itemHistory);
     }
 }
