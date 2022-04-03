@@ -9,19 +9,34 @@ export interface DialogBaseProps {
     children: React.ReactNode;
     fullWidth?: boolean;
     maxWidth?: DialogProps['maxWidth'];
+    onOpen?: () => void;
+    onClose?: () => void;
 }
 
-const DialogBase = forwardRef<DialogBaseRef, DialogBaseProps>(({children, fullWidth = false, maxWidth = "md" }: DialogBaseProps, ref) => {
+const DialogBase = forwardRef<DialogBaseRef, DialogBaseProps>((
+    {
+        children,
+        fullWidth = false,
+        maxWidth = "md",
+        onOpen,
+        onClose
+    }: DialogBaseProps, ref) => {
     const [open, setOpen] = useState(false);
 
     useImperativeHandle(ref, () => ({
         openDialog: () => {
             setOpen(true);
+            if (onOpen) {
+                onOpen();
+            }
         },
     }));
 
     const handleClose = () => {
         setOpen(false);
+        if (onClose) {
+            onClose();
+        }
     }
 
     return (
