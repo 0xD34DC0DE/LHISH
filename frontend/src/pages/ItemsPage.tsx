@@ -6,24 +6,34 @@ import {useAuthGet} from "../hooks/QueryHooks";
 import IItem from "../models/ItemView";
 import {ItemCard} from "../components/ItemCard";
 import {CreateItemDialog} from "../components/CreateItemDialog";
-import {useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
+import {Typography} from "@mui/material";
+import {red} from "@mui/material/colors";
+import ICategory from "../models/CategoryView";
 
 const ItemsPage = () => {
     const dialogRef = useRef<DialogBaseRef>(null);
     const params = useParams<{ categoryId: string }>();
+    const isInCategory = params.categoryId !== undefined;
+    const location = useLocation();
 
-    const getUrl = () => {
-        if (params.categoryId)
+    const getItemsUrl = () => {
+        if (isInCategory)
             return `http://localhost:8080/item/category/${params.categoryId}`;
         else
             return "http://localhost:8080/item/all";
     }
 
-    const [get, items, error, reset] = useAuthGet<IItem[]>(getUrl());
+    const [getItems, items, itemsError, itemsReset] = useAuthGet<IItem[]>(getItemsUrl());
+    const [getCategory, category, categoryError, categoryReset] =
+        useAuthGet<ICategory>(`http://localhost:8080/category/${params.categoryId}`);
 
     useEffect(() => {
-        get();
-    }, []);
+        getItems();
+        categoryReset();
+        if (isInCategory)
+            getCategory();
+    }, [location]);
 
     const onAddButtonClick = () => {
         dialogRef.current?.openDialog();
@@ -36,13 +46,22 @@ const ItemsPage = () => {
     }
 
     const onItemCreated = () => {
-        reset();
+        itemsReset();
+        getItems();
+    }
+
+    function getTitle() {
+        if (isInCategory)
+            return `Items of category: ${category?.name ?? ""}`;
+        else
+            return "All Items";
     }
 
     return (
         <>
-            <PageHeader title={"Items"} onAddButtonClick={onAddButtonClick}/>
-
+            <PageHeader title={getTitle()} onAddButtonClick={onAddButtonClick}/>
+            {itemsError && <Typography color={red[500]}>{itemsError}</Typography>}
+            {category && !items?.length && <Typography>No items in category: {category.name}</Typography>}
             {/*TODO add column number change when going small (responsive)*/}
             <CardMasonry cards={mapItems(items ?? [])}/>
             <CreateItemDialog onItemCreated={onItemCreated} innerRef={dialogRef}/>
