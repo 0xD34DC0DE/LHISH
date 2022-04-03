@@ -1,5 +1,5 @@
 import axios, {AxiosError} from "axios";
-import AccountView from "../models/AccountView";
+import AccountView from "../views/AccountView";
 import jwtDecode from "jwt-decode";
 
 type TokenResponse = {

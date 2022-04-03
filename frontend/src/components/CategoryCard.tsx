@@ -2,7 +2,7 @@ import {Card, CardActions, CardContent, CardMedia, IconButton, Link, Typography}
 import ClearIcon from "@mui/icons-material/Clear";
 import React from "react";
 import LaunchIcon from '@mui/icons-material/Launch';
-import ICategory from "../models/CategoryView";
+import ICategory from "../views/CategoryView";
 
 export interface ICategoryCardComponent {}
 

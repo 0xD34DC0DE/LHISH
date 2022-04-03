@@ -1,7 +1,7 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import {MenuItem, Select, SelectChangeEvent} from "@mui/material";
 import {useAuthGet} from "../hooks/QueryHooks";
-import {CategoryIdNamePairListView} from "../models/CategoryIdNamePairListView";
+import {CategoryIdNamePairListView} from "../views/CategoryIdNamePairListView";
 
 export interface CategoryDropDownRef {
     reset: () => void;

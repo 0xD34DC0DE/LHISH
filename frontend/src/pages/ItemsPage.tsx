@@ -3,13 +3,13 @@ import {PageHeader} from "../components/PageHeader";
 import {CardMasonry} from "../components/CardMasonry";
 import {DialogBaseRef} from "../components/DialogBase";
 import {useAuthGet} from "../hooks/QueryHooks";
-import IItem from "../models/ItemView";
+import IItem from "../views/ItemView";
 import {ItemCard} from "../components/ItemCard";
 import {CreateItemDialog} from "../components/CreateItemDialog";
 import {useLocation, useParams} from "react-router-dom";
 import {Typography} from "@mui/material";
 import {red} from "@mui/material/colors";
-import ICategory from "../models/CategoryView";
+import ICategory from "../views/CategoryView";
 
 const ItemsPage = () => {
     const dialogRef = useRef<DialogBaseRef>(null);
