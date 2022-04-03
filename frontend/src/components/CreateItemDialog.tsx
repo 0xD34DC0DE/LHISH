@@ -7,17 +7,14 @@ import {
     DialogTitle,
     FormControl,
     InputLabel,
-    MenuItem,
-    Select,
-    SelectChangeEvent,
-    TextField,
-    Typography
+    TextField
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {FileUploadButton} from "./FileUploadButton";
-import {useAuthFormPost, useAuthGet} from "../hooks/QueryHooks";
-import {green, red} from "@mui/material/colors";
-import {CategoryIdNamePairListView} from "../models/CategoryIdNamePairListView";
+import {useAuthFormPost} from "../hooks/QueryHooks";
+import {ErrorMessage} from "./ErrorMessage";
+import {SuccessMessage} from "./SucessMessage";
+import {CategoryDropDown} from "./CategoryDropDown";
 
 export interface CreateItemDialogProps {
     innerRef: React.ForwardedRef<DialogBaseRef>;
@@ -25,71 +22,49 @@ export interface CreateItemDialogProps {
 }
 
 export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProps) => {
-    const [itemName, setItemName] = useState("");
-    const [description, setDescription] = useState("");
-    const [category, setCategory] = useState("");
+    const [itemName, setItemName] = useState<string | null>(null);
+    const [description, setDescription] = useState<string | null>(null);
+    const [categoryId, setCategoryId] = useState<string | null>(null);
     const [file, setFile] = useState<File>();
+    const [canCreate, setCanCreate] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const [postForm, formData, formError, formReset] = useAuthFormPost(
         "http://localhost:8080/item/create"
     );
 
     useEffect(() => {
-        if(!formError) {
+        if (!formError) {
             onItemCreated();
         }
     }, [formData]);
 
-    const [getCategoryIdNamePairs, categoryIdNamePairs, categoryIdNamePairsError, categoryIdNamePairsReset] =
-        useAuthGet<CategoryIdNamePairListView>(
-            "http://localhost:8080/category/all/ids"
-        );
-
-    useEffect(() => {
-        if (!categoryIdNamePairs) {
-            getCategoryIdNamePairs();
-        }
-        if(formError || categoryIdNamePairsError) {
-            formReset();
-            categoryIdNamePairsReset();
-        }
-    }, []);
+    const onClose = () => {
+        formReset();
+        setCategoryId(null);
+    }
 
     const onSubmit = () => {
-        if (!file || !itemName) return;
+        if (!canCreate) {
+            setError("Item name, category and image are required");
+            return;
+        }
         postForm(
             ["name", itemName],
             ["description", description],
             ["image", file],
-            ["categoryId", category]
+            ["categoryId", categoryId]
         );
     }
 
-    const onClose = () => {
-        formReset();
-        categoryIdNamePairsReset();
-    }
+    useEffect(() => {
+        setError(null);
+        setCanCreate([itemName, categoryId, file].every(x => x !== null));
+    }, [categoryId, itemName, file]);
 
-    const buildSelect = () => {
-        const categoryIds = categoryIdNamePairs?.categoryIds ?? [];
-        const categoryNames = categoryIdNamePairs?.categoryNames ?? [];
-
-        return <Select
-            labelId="category-id-select-label"
-            id="category-id-select"
-            value={category}
-            label="Category"
-            onChange={(e: SelectChangeEvent) => setCategory(e.target.value)}
-        >
-            {categoryIds
-                .map((k, i) =>
-                    [k, categoryNames[i]] // zip id and category name
-                )
-                .map(pair => (
-                    <MenuItem key={pair[0]} value={pair[0]}>{pair[1]}</MenuItem>
-                ))}
-        </Select>;
-    }
+    useEffect(() => {
+        setError(formError);
+    }, [formError]);
 
     return (
         <DialogBase ref={innerRef} fullWidth maxWidth={"sm"} onClose={onClose}>
@@ -116,21 +91,23 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
                 />
                 <FormControl fullWidth sx={{marginTop: 1, marginBottom: 1}}>
-                    <InputLabel id="category-id-select-label" >Category</InputLabel>
-                    {buildSelect()}
+                    <InputLabel id="category-id-select-label">Category</InputLabel>
+                    <CategoryDropDown setError={setError} setCategoryId={setCategoryId}/>
                 </FormControl>
                 <FileUploadButton onFileChanged={setFile} accept={"image/*"} id={"image-upload"}/>
             </DialogContent>
 
             <DialogActions>
                 <Box sx={{marginLeft: 2, marginRight: "auto"}}>
-                    {formData && <Typography sx={{color: green[500]}}>Item: {itemName} created</Typography>}
-                    {formError && <Typography sx={{color: red[500]}}>Could not create item
-                        "{itemName}" <br/>Reason: {formError}</Typography>}
-                    {categoryIdNamePairsError && <Typography sx={{color: red[500]}}>Could not create item
-                        "{itemName}" <br/>Reason: {formError}</Typography>}
+
+                    <SuccessMessage enabled={formData != null}>Item: {itemName} created</SuccessMessage>
+
+                    <ErrorMessage enabled={error != null}>
+                        Could not create item {itemName} <br/>Reason: {error}
+                    </ErrorMessage>
+
                 </Box>
-                <Button disabled={categoryIdNamePairsError != null} onClick={onSubmit}>Create</Button>
+                <Button onClick={onSubmit}>Create</Button>
             </DialogActions>
 
         </DialogBase>)
