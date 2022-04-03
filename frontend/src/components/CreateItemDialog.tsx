@@ -25,7 +25,7 @@ export interface CreateItemDialogProps {
 }
 
 export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProps) => {
-    const [itemName, setItemName] = useState("Item name");
+    const [itemName, setItemName] = useState("");
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState("");
     const [file, setFile] = useState<File>();
@@ -33,6 +33,12 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
     const [postForm, formData, formError, formReset] = useAuthFormPost(
         "http://localhost:8080/item/create"
     );
+
+    useEffect(() => {
+        if(!formError) {
+            onItemCreated();
+        }
+    }, [formData]);
 
     const [getCategoryIdNamePairs, categoryIdNamePairs, categoryIdNamePairsError, categoryIdNamePairsReset] =
         useAuthGet<CategoryIdNamePairListView>(
@@ -50,16 +56,24 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
     }, []);
 
     const onSubmit = () => {
-        if (!file) return;
+        if (!file || !itemName) return;
         postForm(
             ["name", itemName],
             ["description", description],
-            ["image", file]
+            ["image", file],
+            ["categoryId", category]
         );
     }
 
+    const onClose = () => {
+        formReset();
+        categoryIdNamePairsReset();
+    }
+
     const buildSelect = () => {
-        if (!categoryIdNamePairs) return null;
+        const categoryIds = categoryIdNamePairs?.categoryIds ?? [];
+        const categoryNames = categoryIdNamePairs?.categoryNames ?? [];
+
         return <Select
             labelId="category-id-select-label"
             id="category-id-select"
@@ -67,9 +81,9 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
             label="Category"
             onChange={(e: SelectChangeEvent) => setCategory(e.target.value)}
         >
-            {categoryIdNamePairs.categoryIds
+            {categoryIds
                 .map((k, i) =>
-                    [k, categoryIdNamePairs.categoryNames[i]] // zip id and category name
+                    [k, categoryNames[i]] // zip id and category name
                 )
                 .map(pair => (
                     <MenuItem key={pair[0]} value={pair[0]}>{pair[1]}</MenuItem>
@@ -78,7 +92,7 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
     }
 
     return (
-        <DialogBase ref={innerRef} fullWidth maxWidth={"sm"}>
+        <DialogBase ref={innerRef} fullWidth maxWidth={"sm"} onClose={onClose}>
             <DialogTitle>Create Item</DialogTitle>
             <DialogContent>
                 <TextField
@@ -101,8 +115,8 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
                     rows={4}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
                 />
-                <FormControl fullWidth>
-                    <InputLabel id="category-id-select-label">Category</InputLabel>
+                <FormControl fullWidth sx={{marginTop: 1, marginBottom: 1}}>
+                    <InputLabel id="category-id-select-label" >Category</InputLabel>
                     {buildSelect()}
                 </FormControl>
                 <FileUploadButton onFileChanged={setFile} accept={"image/*"} id={"image-upload"}/>
