@@ -16,7 +16,7 @@ public class WebExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {APIException.class})
     protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
         return handleExceptionInternal(ex,
-                APIResponse.error(ex.getCause() == null ? "unknown cause" : ex.getCause().getMessage()),
+                APIResponse.error(ex.getMessage()),
                 new HttpHeaders(),
                 HttpStatus.OK,
                 request);
