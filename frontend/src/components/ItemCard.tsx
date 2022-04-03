@@ -3,7 +3,7 @@ import UserHistory from "../icons/UserHistoryIcon";
 import NotListedLocationIcon from "@mui/icons-material/NotListedLocation";
 import ClearIcon from "@mui/icons-material/Clear";
 import React from "react";
-import IItem, { Availability } from "../models/ItemModel";
+import IItem, { Availability } from "../models/ItemView";
 
 export interface IItemCardComponent {
 }

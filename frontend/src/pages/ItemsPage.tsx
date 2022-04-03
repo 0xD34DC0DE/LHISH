@@ -3,7 +3,7 @@ import {PageHeader} from "../components/PageHeader";
 import {CardMasonry} from "../components/CardMasonry";
 import {DialogBaseRef} from "../components/DialogBase";
 import {useAuthGet} from "../hooks/QueryHooks";
-import IItem from "../models/ItemModel";
+import IItem from "../models/ItemView";
 import {ItemCard} from "../components/ItemCard";
 import {CreateItemDialog} from "../components/CreateItemDialog";
 

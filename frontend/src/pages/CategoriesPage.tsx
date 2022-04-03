@@ -3,7 +3,7 @@ import {PageHeader} from "../components/PageHeader";
 import {CardMasonry} from "../components/CardMasonry";
 import {DialogBaseRef} from "../components/DialogBase";
 import {CreateCategoryDialog} from "../components/CreateCategoryDialog";
-import ICategory from "../models/CategoryModel";
+import ICategory from "../models/CategoryView";
 import {CategoryCard} from "../components/CategoryCard";
 import {useAuthGet} from "../hooks/QueryHooks";
 

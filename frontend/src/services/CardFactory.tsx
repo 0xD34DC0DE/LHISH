@@ -1,4 +1,4 @@
-import {Availability} from "../models/ItemModel";
+import {Availability} from "../models/ItemView";
 import {IItemCardComponent, ItemCard} from "../components/ItemCard";
 import {CategoryCard, ICategoryCardComponent} from "../components/CategoryCard";
 
