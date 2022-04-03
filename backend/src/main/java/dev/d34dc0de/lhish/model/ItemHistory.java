@@ -17,6 +17,8 @@ public class ItemHistory {
     private String id;
 
     public record ItemHistoryEntry(String accountId, String actionDescription) {
+        @Builder
+        public ItemHistoryEntry{}
     }
 
     private List<ItemHistoryEntry> entries;
