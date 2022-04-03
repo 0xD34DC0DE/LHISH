@@ -193,6 +193,8 @@ export const useAuthFormPost = <R>(url: string,
     );
 }
 
+//TODO use error setter instead of returning error state
+
 export const useAuthGet = <R>(url: string, headers: [string, ValueType | Function][] = []) => {
     const {session} = useContext(SessionContext);
     return useGet<R>(url, [['Authorization', `Bearer ${session.token}`], ...headers]);
