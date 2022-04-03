@@ -1,11 +1,12 @@
 package dev.d34dc0de.lhish.view.view_factory;
 
 import dev.d34dc0de.lhish.model.Category;
-import dev.d34dc0de.lhish.view.CategoryIdListView;
+import dev.d34dc0de.lhish.view.CategoryIdNamePairListView;
 import dev.d34dc0de.lhish.view.CategoryListView;
 import dev.d34dc0de.lhish.view.CategoryView;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class CategoryViewFactory {
 
@@ -24,9 +25,10 @@ public abstract class CategoryViewFactory {
                 .build();
     }
 
-    public static CategoryIdListView toCategoryIdListView(List<Category> categories) {
-        return CategoryIdListView.builder()
+    public static CategoryIdNamePairListView toCategoryIdNamePairListView(List<Category> categories) {
+        return CategoryIdNamePairListView.builder()
                 .categoryIds(categories.stream().map(Category::getId).toList())
+                .categoryNames(categories.stream().map(Category::getName).toList())
                 .build();
     }
 }
