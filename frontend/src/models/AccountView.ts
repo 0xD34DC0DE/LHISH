@@ -1,5 +1,5 @@
 
-export default interface AccountModel {
+export default interface AccountView {
     id: string
     username: string,
     email: string,
