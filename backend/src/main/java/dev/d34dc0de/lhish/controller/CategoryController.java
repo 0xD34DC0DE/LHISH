@@ -8,6 +8,7 @@ import dev.d34dc0de.lhish.model.Image;
 import dev.d34dc0de.lhish.response.APIResponse;
 import dev.d34dc0de.lhish.service.CategoryService;
 import dev.d34dc0de.lhish.service.ImageService;
+import dev.d34dc0de.lhish.view.CategoryIdNamePairListView;
 import dev.d34dc0de.lhish.view.CategoryView;
 import dev.d34dc0de.lhish.view.view_factory.CategoryViewFactory;
 import org.slf4j.Logger;
@@ -55,9 +56,9 @@ public class CategoryController extends BaseController {
     }
 
     @GetMapping("/all/ids")
-    private ResponseEntity<List<String>> getAllIds() {
+    private ResponseEntity<CategoryIdNamePairListView> getAllIds() {
         return ResponseEntity.ok(
-                CategoryViewFactory.toCategoryIdListView(categoryService.findAll()).categoryIds()
+                CategoryViewFactory.toCategoryIdNamePairListView(categoryService.findAll())
         );
     }
 }
