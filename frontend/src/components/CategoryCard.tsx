@@ -22,10 +22,11 @@ export const CategoryCard : ICategoryCardComponent & React.FunctionComponent<ICa
             <CardContent>
                 <Link href="#" underline={"none"} color={"inherit"}>
                     <Typography paragraph variant="h5"
-                                sx={{alignContent: "top"}}>{name}<SuperscriptLinkIcon/></Typography>
+                                sx={{alignContent: "top", marginBottom: 0}}>{name}<SuperscriptLinkIcon/></Typography>
                 </Link>
-                <Typography paragraph sx={{fontSize: 14}} color="text.secondary" gutterBottom>
-                    Category: {description}
+                <Typography sx={{fontSize: 14}} display="inline" color="text.primary">Category description: </Typography>
+                <Typography paragraph sx={{fontSize: 14}} display="inline" color="text.secondary" gutterBottom>
+                     {description}
                 </Typography>
             </CardContent>
             <CardActions disableSpacing>
