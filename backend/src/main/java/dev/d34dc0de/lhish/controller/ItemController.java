@@ -54,9 +54,9 @@ public class ItemController extends BaseController {
     }
 
     @GetMapping("/category/{id}")
-    private ResponseEntity<ItemListView> get(@PathVariable("id") String id) {
+    private ResponseEntity<List<ItemView>> get(@PathVariable("id") String id) {
         return ResponseEntity.ok(
-                ItemViewFactory.toItemListView(itemService.findByCategoryId(id))
+                ItemViewFactory.toItemListView(itemService.findByCategoryId(id)).items()
         );
     }
 }

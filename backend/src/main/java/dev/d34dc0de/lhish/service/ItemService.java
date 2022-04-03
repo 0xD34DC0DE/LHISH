@@ -42,10 +42,9 @@ public class ItemService {
     }
 
     public List<Item> findByCategoryId(String categoryId) {
-        List<Item> items = itemRepository.findByCategoryId(categoryId);
-        if (items.isEmpty()) {
+        if(categoryService.findById(categoryId).isEmpty()) {
             throw new NotFoundException("Category", categoryId);
         }
-        return items;
+        return itemRepository.findByCategoryId(categoryId);
     }
 }
