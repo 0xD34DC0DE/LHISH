@@ -52,4 +52,11 @@ public class ItemController extends BaseController {
                 ItemViewFactory.toItemListView(itemService.getAll()).items()
         );
     }
+
+    @GetMapping("/category/{id}")
+    private ResponseEntity<ItemListView> get(@PathVariable("id") String id) {
+        return ResponseEntity.ok(
+                ItemViewFactory.toItemListView(itemService.findByCategoryId(id))
+        );
+    }
 }

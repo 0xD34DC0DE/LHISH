@@ -22,13 +22,13 @@ public class ItemService {
     }
 
     public Item insert(Item item) throws NotFoundException {
-//        if(item.getCategoryId() == null) {
-//            throw new NullFieldException("Category id cannot be null");
-//        }
+        if(item.getCategoryId() == null) {
+            throw new NullFieldException("Category id cannot be null");
+        }
 
-//        if (categoryService.findById(item.getCategoryId()).isEmpty()) {
-//            throw new NotFoundException("Category", item.getCategoryId());
-//        }
+        if (categoryService.findById(item.getCategoryId()).isEmpty()) {
+            throw new NotFoundException("Category", item.getCategoryId());
+        }
 
         return itemRepository.insert(item);
     }
@@ -39,5 +39,13 @@ public class ItemService {
 
     public Optional<Item> findById(String id) {
         return itemRepository.findById(id);
+    }
+
+    public List<Item> findByCategoryId(String categoryId) {
+        List<Item> items = itemRepository.findByCategoryId(categoryId);
+        if (items.isEmpty()) {
+            throw new NotFoundException("Category", categoryId);
+        }
+        return items;
     }
 }
