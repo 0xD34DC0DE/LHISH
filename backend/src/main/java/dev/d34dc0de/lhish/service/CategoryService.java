@@ -28,7 +28,7 @@ public class CategoryService {
     /**
      * Try to find a category by its id.
      * @param id id of the category to find.
-     * @return Optional<Category> if found, empty Optional otherwise.
+     * @return Optional&lt;Category&gt; if found, empty Optional otherwise.
      */
     public Optional<Category> findById(String id) {
         return categoryRepository.findById(id);
@@ -36,7 +36,7 @@ public class CategoryService {
 
     /**
      * Get a category by its id.
-     * @param id id of the category to find.
+     * @param id id of the category to get.
      * @return Category if found, throws NotFoundException otherwise.
      */
     public Category getById(String id) {
