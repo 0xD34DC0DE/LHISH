@@ -16,7 +16,7 @@ public class ItemHistoryService {
         this.itemHistoryRepository = itemHistoryRepository;
     }
 
-    public ItemHistory create(ItemHistory itemHistory) {
+    public ItemHistory insert(ItemHistory itemHistory) {
         return itemHistoryRepository.save(itemHistory);
     }
 
