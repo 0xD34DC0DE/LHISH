@@ -61,4 +61,11 @@ public class CategoryController extends BaseController {
                 CategoryViewFactory.toCategoryIdNamePairListView(categoryService.findAll())
         );
     }
+
+    @GetMapping("/{id}")
+    private ResponseEntity<CategoryView> findById(@PathVariable("id") String id) {
+        return ResponseEntity.ok(
+                CategoryViewFactory.toCategoryView(categoryService.getById(id))
+        );
+    }
 }
