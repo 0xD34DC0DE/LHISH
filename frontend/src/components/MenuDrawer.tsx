@@ -23,11 +23,11 @@ export const MenuDrawer = forwardRef<DrawerRef, DrawerProps>(({children}, ref) =
     }));
 
     const mapChildren = (children: React.ReactNode) => {
-        if(!children)
+        if (!children)
             return [];
 
         // Sets the key of the children
-        if(Array.isArray(children)) {
+        if (Array.isArray(children)) {
             return React.Children.map(children, e => e);
         } else {
             return React.Children.map([children], e => e);
