@@ -46,7 +46,6 @@ const ItemsPage = () => {
     }
 
     const onItemCreated = () => {
-        itemsReset();
         getItems();
     }
 
