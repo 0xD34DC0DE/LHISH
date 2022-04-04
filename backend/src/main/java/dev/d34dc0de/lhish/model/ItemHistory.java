@@ -5,18 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Data
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document("categories")
-public class Category {
+@Data
+public class ItemHistory {
     @Id
-    String id;
-    String userId;
-    String name;
-    String description;
-    String imageId;
+    private String id;
+    private List<ItemHistoryEntry> entries;
 }

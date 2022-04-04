@@ -1,8 +1,8 @@
 import DialogBase, {DialogBaseRef} from "./DialogBase"
 import {Box, Button, DialogActions, DialogContent, DialogTitle, TextField, Typography} from "@mui/material";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {FileUploadButton} from "./FileUploadButton";
-import {useAuthFormPost, useAuthGet, useAuthPost} from "../hooks/QueryHooks";
+import {useAuthFormPost} from "../hooks/QueryHooks";
 import {green, red} from "@mui/material/colors";
 
 export interface CreateCategoryDialogProps {
@@ -15,7 +15,7 @@ export const CreateCategoryDialog = ({innerRef, onCategoryCreated}: CreateCatego
     const [description, setDescription] = useState("");
     const [file, setFile] = useState<File>();
 
-    const [postForm, data, error, reset] = useAuthFormPost(
+    const [postForm, data, error] = useAuthFormPost(
         "http://localhost:8080/category/create"
     );
 

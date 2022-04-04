@@ -2,24 +2,14 @@ import {Card, CardActions, CardContent, CardMedia, IconButton, Link, Typography}
 import ClearIcon from "@mui/icons-material/Clear";
 import React from "react";
 import LaunchIcon from '@mui/icons-material/Launch';
-import ICategory from "../models/CategoryModel";
+import ICategory from "../views/CategoryView";
 
 export interface ICategoryCardComponent {}
 
-export const CategoryCard : ICategoryCardComponent & React.FunctionComponent<ICategory> = ({id, name, description, image}: ICategory) => {
+export const CategoryCard : ICategoryCardComponent & React.FunctionComponent<ICategory> = ({id, name, description, imageId}: ICategory) => {
 
     const SuperscriptLinkIcon = () => {
         return <LaunchIcon sx={{marginLeft: 0.5, marginBottom: 1, fontSize: 12}}/>;
-    }
-
-    const base64StringToBlob = (base64String: string) => {
-        const byteCharacters = window.atob(base64String);
-        const byteCount = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteCount[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteCount);
-        return new Blob([byteArray], {type: 'image/jpeg'});
     }
 
     return (
@@ -27,15 +17,16 @@ export const CategoryCard : ICategoryCardComponent & React.FunctionComponent<ICa
             <CardMedia
                 component="img"
                 height="140"
-                image={URL.createObjectURL(base64StringToBlob(image))}
+                image={`http://localhost:8080/image/${imageId}`}
             />
             <CardContent>
-                <Link href="#" underline={"none"} color={"inherit"}>
+                <Link href={`/items/category/${id}`} underline={"none"} color={"inherit"}>
                     <Typography paragraph variant="h5"
-                                sx={{alignContent: "top"}}>{name}<SuperscriptLinkIcon/></Typography>
+                                sx={{alignContent: "top", marginBottom: 0}}>{name}<SuperscriptLinkIcon/></Typography>
                 </Link>
-                <Typography paragraph sx={{fontSize: 14}} color="text.secondary" gutterBottom>
-                    Category: {description}
+                <Typography sx={{fontSize: 14}} display="inline" color="text.primary">Category description: </Typography>
+                <Typography paragraph sx={{fontSize: 14}} display="inline" color="text.secondary" gutterBottom>
+                     {description}
                 </Typography>
             </CardContent>
             <CardActions disableSpacing>

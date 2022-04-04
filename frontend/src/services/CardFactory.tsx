@@ -1,4 +1,4 @@
-import {Availability} from "../models/ItemModel";
+import {Availability} from "../views/ItemView";
 import {IItemCardComponent, ItemCard} from "../components/ItemCard";
 import {CategoryCard, ICategoryCardComponent} from "../components/CategoryCard";
 
@@ -10,13 +10,15 @@ const CardFactory = (cardCount: number = 1, cardType: string[]): (IItemCardCompo
             id: i.toString(),
             name: "Item " + i.toString(),
             description: "Description of #" + i.toString(),
-            availability: Availability.Available
+            imageId: "",
+            availability: Availability.Available,
+            historyId: ""
         }}/>
     }
     const mock_category = (i: number): ICategoryCardComponent => {
         return <CategoryCard
             description={""}
-            image={""}
+            imageId={""}
             id={i.toString()}
             name={"Category " + i.toString()}
         />

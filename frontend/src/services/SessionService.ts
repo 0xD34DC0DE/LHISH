@@ -1,5 +1,5 @@
 import axios, {AxiosError} from "axios";
-import AccountModel from "../models/AccountModel";
+import AccountView from "../views/AccountView";
 import jwtDecode from "jwt-decode";
 
 type TokenResponse = {
@@ -38,7 +38,7 @@ export const checkUsernameExists = async (username: string) => {
         });
 }
 
-export const decodeJwt = (token: string): AccountModel => {
+export const decodeJwt = (token: string): AccountView => {
     const decodedToken = jwtDecode<JwtToken>(token);
     return {role: decodedToken.role, username: decodedToken.username, email: decodedToken.email, id: decodedToken.sub}
 }

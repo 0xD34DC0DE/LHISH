@@ -3,17 +3,37 @@ import {PageHeader} from "../components/PageHeader";
 import {CardMasonry} from "../components/CardMasonry";
 import {DialogBaseRef} from "../components/DialogBase";
 import {useAuthGet} from "../hooks/QueryHooks";
-import IItem from "../models/ItemModel";
+import IItem from "../views/ItemView";
 import {ItemCard} from "../components/ItemCard";
 import {CreateItemDialog} from "../components/CreateItemDialog";
+import {useLocation, useParams} from "react-router-dom";
+import {Typography} from "@mui/material";
+import {red} from "@mui/material/colors";
+import ICategory from "../views/CategoryView";
 
 const ItemsPage = () => {
     const dialogRef = useRef<DialogBaseRef>(null);
-    const [get, items, error, reset] = useAuthGet<IItem[]>("http://localhost:8080/item/all");
+    const params = useParams<{ categoryId: string }>();
+    const isInCategory = params.categoryId !== undefined;
+    const location = useLocation();
+
+    const getItemsUrl = () => {
+        if (isInCategory)
+            return `http://localhost:8080/item/category/${params.categoryId}`;
+        else
+            return "http://localhost:8080/item/all";
+    }
+
+    const [getItems, items, itemsError, itemsReset] = useAuthGet<IItem[]>(getItemsUrl());
+    const [getCategory, category, categoryError, categoryReset] =
+        useAuthGet<ICategory>(`http://localhost:8080/category/${params.categoryId}`);
 
     useEffect(() => {
-        get();
-    }, []);
+        getItems();
+        categoryReset();
+        if (isInCategory)
+            getCategory();
+    }, [location]);
 
     const onAddButtonClick = () => {
         dialogRef.current?.openDialog();
@@ -26,13 +46,21 @@ const ItemsPage = () => {
     }
 
     const onItemCreated = () => {
-        reset();
+        getItems();
+    }
+
+    function getTitle() {
+        if (isInCategory)
+            return `Items of category: ${category?.name ?? ""}`;
+        else
+            return "All Items";
     }
 
     return (
         <>
-            <PageHeader title={"Items"} onAddButtonClick={onAddButtonClick}/>
-
+            <PageHeader title={getTitle()} onAddButtonClick={onAddButtonClick}/>
+            {itemsError && <Typography color={red[500]}>{itemsError}</Typography>}
+            {category && !items?.length && <Typography>No items in category: {category.name}</Typography>}
             {/*TODO add column number change when going small (responsive)*/}
             <CardMasonry cards={mapItems(items ?? [])}/>
             <CreateItemDialog onItemCreated={onItemCreated} innerRef={dialogRef}/>

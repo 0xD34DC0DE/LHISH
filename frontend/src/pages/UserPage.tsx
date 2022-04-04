@@ -78,6 +78,7 @@ export const UserPage = () => {
                     <Route path="/favorites" element={<FavoritesPage/>}/>
                     <Route path="/categories" element={<CategoriesPage/>}/>
                     <Route path="/items" element={<ItemsPage/>}/>
+                    <Route path="/items/category/:categoryId" element={<ItemsPage/>}/>
                     <Route path="/" element={<FavoritesPage/>}/>
                     <Route path="" element={<NotFoundPage/>}/>
                 </Routes>
