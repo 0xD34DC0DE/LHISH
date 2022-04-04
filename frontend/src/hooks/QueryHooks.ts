@@ -29,7 +29,7 @@ const toFormData = (formData: ([string, ValueType | Function | File])[]) => {
     }, new FormData());
 }
 
-export const useGet = <R>(url: string, headers: [string, ValueType | Function][] = []):
+export const useGet = <R>(url: string | (() => string), headers: [string, ValueType | Function][] = []):
     [
         (...params: [string, ValueType | Function][]) => void,
             R | null,
@@ -44,8 +44,12 @@ export const useGet = <R>(url: string, headers: [string, ValueType | Function][]
         setError(null)
     }
 
+    const getUrl = () => {
+        return typeof url === "function" ? url() : url;
+    }
+
     const get = (...params: [string, ValueType | Function][]) =>
-        axios.get<R & APIError>(url, {
+        axios.get<R & APIError>(getUrl(), {
             params: callGetters(params),
             headers: callGetters(headers)
         })
@@ -195,7 +199,7 @@ export const useAuthFormPost = <R>(url: string,
 
 //TODO use error setter instead of returning error state
 
-export const useAuthGet = <R>(url: string, headers: [string, ValueType | Function][] = []) => {
+export const useAuthGet = <R>(url: string | (() => string), headers: [string, ValueType | Function][] = []) => {
     const {session} = useContext(SessionContext);
     return useGet<R>(url, [['Authorization', `Bearer ${session.token}`], ...headers]);
 }
