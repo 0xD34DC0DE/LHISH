@@ -3,7 +3,7 @@ package dev.d34dc0de.lhish.controller;
 import dev.d34dc0de.lhish.form.ItemHistoryActionForm;
 import dev.d34dc0de.lhish.form.model_factory.ItemHistoryModelFactory;
 import dev.d34dc0de.lhish.model.Account;
-import dev.d34dc0de.lhish.model.ItemHistory;
+import dev.d34dc0de.lhish.model.ItemHistoryEntry;
 import dev.d34dc0de.lhish.response.APIResponse;
 import dev.d34dc0de.lhish.service.AccountService;
 import dev.d34dc0de.lhish.service.ItemHistoryService;
@@ -39,8 +39,8 @@ public class ItemHistoryController {
     @PostMapping("/commit")
     private ResponseEntity<APIResponse> commitItemAction(@AuthenticationPrincipal Account account,
                                                          @RequestBody ItemHistoryActionForm itemHistoryActionForm) {
-        ItemHistory.ItemHistoryEntry itemHistoryEntry =
-                ItemHistoryModelFactory.toItemHistoryModelEntry(itemHistoryActionForm, account.getId());
+        ItemHistoryEntry itemHistoryEntry =
+                ItemHistoryModelFactory.toItemHistoryEntry(itemHistoryActionForm, account.getId());
         itemHistoryService.addItemHistoryEntry(itemHistoryActionForm.id(), itemHistoryEntry);
         return ResponseEntity.ok(APIResponse.ok("Item history entry committed"));
     }
