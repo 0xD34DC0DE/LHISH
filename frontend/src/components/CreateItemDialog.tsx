@@ -34,7 +34,7 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
     );
 
     useEffect(() => {
-        if (!formError) {
+        if (!formError && formData) {
             onItemCreated();
         }
     }, [formData]);
@@ -51,7 +51,7 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
         }
         postForm(
             ["name", itemName],
-            ["description", description],
+            ["description", description ?? ""],
             ["image", file],
             ["categoryId", categoryId]
         );
@@ -100,7 +100,7 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
             <DialogActions>
                 <Box sx={{marginLeft: 2, marginRight: "auto"}}>
 
-                    <SuccessMessage enabled={formData != null}>Item: {itemName} created</SuccessMessage>
+                    <SuccessMessage enabled={formData != null}>Item: "{itemName}" created</SuccessMessage>
 
                     <ErrorMessage enabled={error != null}>
                         Could not create item {itemName} <br/>Reason: {error}
