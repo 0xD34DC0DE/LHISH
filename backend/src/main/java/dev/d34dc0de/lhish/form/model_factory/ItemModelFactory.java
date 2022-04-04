@@ -6,7 +6,7 @@ import dev.d34dc0de.lhish.model.Item;
 
 public abstract class ItemModelFactory {
 
-    public static Item toModel(ItemCreationForm itemCreationForm, String userId, String imageId) {
+    public static Item toItem(ItemCreationForm itemCreationForm, String userId, String imageId, String historyId) {
 
         if (imageId == null) {
             throw new NullFieldException("Image cannot be null");
@@ -18,6 +18,7 @@ public abstract class ItemModelFactory {
                 .name(itemCreationForm.name())
                 .description(itemCreationForm.description())
                 .imageId(imageId)
+                .historyId(historyId)
                 .build();
     }
 }
