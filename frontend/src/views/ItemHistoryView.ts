@@ -1,4 +1,4 @@
 export interface IItemHistoryView {
-  usernames: string[];
+  accountNames: string[];
   actions: string[];
 }
