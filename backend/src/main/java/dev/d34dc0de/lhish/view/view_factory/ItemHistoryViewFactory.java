@@ -8,7 +8,7 @@ import dev.d34dc0de.lhish.view.ItemHistoryView;
 public abstract class ItemHistoryViewFactory {
     public static ItemHistoryView toItemHistoryView(AccountService accountService, ItemHistory itemHistory) {
         return ItemHistoryView.builder()
-                .usernames(
+                .accountNames(
                         itemHistory.getEntries().stream()
                                 .map(ItemHistory.ItemHistoryEntry::accountId)
                                 .map(accountService::getById)
@@ -17,7 +17,7 @@ public abstract class ItemHistoryViewFactory {
                 )
                 .actions(
                         itemHistory.getEntries().stream()
-                                .map(ItemHistory.ItemHistoryEntry::actionDescription)
+                                .map(ItemHistoryEntry::actionDescription)
                                 .toList()
                 )
                 .build();
