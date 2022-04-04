@@ -2,6 +2,7 @@ package dev.d34dc0de.lhish.service;
 
 import dev.d34dc0de.lhish.exceptions.NotFoundException;
 import dev.d34dc0de.lhish.model.ItemHistory;
+import dev.d34dc0de.lhish.model.ItemHistoryEntry;
 import dev.d34dc0de.lhish.repository.ItemHistoryRepository;
 import org.springframework.stereotype.Service;
 
@@ -42,9 +43,13 @@ public class ItemHistoryService {
         return itemHistoryRepository.findById(id).orElseThrow(() -> new NotFoundException("ItemHistory", id));
     }
 
-    public ItemHistory addItemHistoryEntry(String id, ItemHistory.ItemHistoryEntry itemHistoryEntry) {
+    public ItemHistory addItemHistoryEntry(String id, ItemHistoryEntry itemHistoryEntry) {
         ItemHistory itemHistory = getById(id);
         itemHistory.getEntries().add(itemHistoryEntry);
         return update(itemHistory);
+    }
+
+    public void delete(String id) {
+        itemHistoryRepository.deleteById(id);
     }
 }
