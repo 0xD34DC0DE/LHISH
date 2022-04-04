@@ -4,7 +4,7 @@ import lombok.Builder;
 
 import java.util.List;
 
-public record ItemHistoryView(List<String> usernames, List<String> actions) {
+public record ItemHistoryView(List<String> accountNames, List<String> actions) {
     @Builder
     public ItemHistoryView{}
 }
