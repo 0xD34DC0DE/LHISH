@@ -2,6 +2,7 @@ package dev.d34dc0de.lhish.view.view_factory;
 
 import dev.d34dc0de.lhish.model.Account;
 import dev.d34dc0de.lhish.model.ItemHistory;
+import dev.d34dc0de.lhish.model.ItemHistoryEntry;
 import dev.d34dc0de.lhish.service.AccountService;
 import dev.d34dc0de.lhish.view.ItemHistoryView;
 
@@ -10,7 +11,7 @@ public abstract class ItemHistoryViewFactory {
         return ItemHistoryView.builder()
                 .accountNames(
                         itemHistory.getEntries().stream()
-                                .map(ItemHistory.ItemHistoryEntry::accountId)
+                                .map(ItemHistoryEntry::accountId)
                                 .map(accountService::getById)
                                 .map(Account::getUsername)
                                 .toList()
