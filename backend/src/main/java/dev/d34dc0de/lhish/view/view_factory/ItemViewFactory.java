@@ -14,6 +14,7 @@ public abstract class ItemViewFactory {
                 .name(item.getName())
                 .description(item.getDescription())
                 .imageId(item.getImageId())
+                .historyId(item.getHistoryId())
                 .build();
     }
 
