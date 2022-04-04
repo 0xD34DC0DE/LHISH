@@ -11,7 +11,8 @@ const CardFactory = (cardCount: number = 1, cardType: string[]): (IItemCardCompo
             name: "Item " + i.toString(),
             description: "Description of #" + i.toString(),
             imageId: "",
-            availability: Availability.Available
+            availability: Availability.Available,
+            historyId: ""
         }}/>
     }
     const mock_category = (i: number): ICategoryCardComponent => {
