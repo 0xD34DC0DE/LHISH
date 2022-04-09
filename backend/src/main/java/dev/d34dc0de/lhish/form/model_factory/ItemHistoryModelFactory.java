@@ -4,6 +4,7 @@ import dev.d34dc0de.lhish.form.ItemHistoryActionForm;
 import dev.d34dc0de.lhish.model.ItemHistory;
 import dev.d34dc0de.lhish.model.ItemHistoryEntry;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,8 @@ public abstract class ItemHistoryModelFactory {
         itemHistoryEntries.add(
                 ItemHistoryEntry.builder()
                         .accountId(accountId)
-                        .actionDescription("created this item")
+                        .actionDescription("Created this item")
+                        .timestamp(LocalDateTime.now())
                         .build()
         );
        return ItemHistory.builder()
@@ -26,6 +28,7 @@ public abstract class ItemHistoryModelFactory {
         return ItemHistoryEntry.builder()
                 .accountId(userId)
                 .actionDescription(itemHistoryActionForm.action())
+                .timestamp(LocalDateTime.now())
                 .build();
     }
 }
