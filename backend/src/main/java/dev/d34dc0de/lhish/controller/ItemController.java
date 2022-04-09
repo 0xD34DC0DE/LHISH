@@ -7,10 +7,12 @@ import dev.d34dc0de.lhish.form.model_factory.ItemModelFactory;
 import dev.d34dc0de.lhish.model.Account;
 import dev.d34dc0de.lhish.model.Image;
 import dev.d34dc0de.lhish.model.ItemHistory;
+import dev.d34dc0de.lhish.model.Template;
 import dev.d34dc0de.lhish.response.APIResponse;
 import dev.d34dc0de.lhish.service.ImageService;
 import dev.d34dc0de.lhish.service.ItemHistoryService;
 import dev.d34dc0de.lhish.service.ItemService;
+import dev.d34dc0de.lhish.service.TemplateService;
 import dev.d34dc0de.lhish.view.ItemView;
 import dev.d34dc0de.lhish.view.view_factory.ItemViewFactory;
 import org.springframework.http.ResponseEntity;
@@ -32,10 +34,16 @@ public class ItemController extends BaseController {
 
     private final ImageService imageService;
 
-    public ItemController(ItemService itemService, ItemHistoryService itemHistoryService, ImageService imageService) {
+    private final TemplateService templateService;
+
+    public ItemController(ItemService itemService,
+                          ItemHistoryService itemHistoryService,
+                          ImageService imageService,
+                          TemplateService templateService) {
         this.itemService = itemService;
         this.itemHistoryService = itemHistoryService;
         this.imageService = imageService;
+        this.templateService = templateService;
     }
 
     @PostMapping("/create")
@@ -47,25 +55,43 @@ public class ItemController extends BaseController {
         } catch (IOException e) {
             return APIError("Image upload failed");
         }
-        ItemHistory itemHistory = ItemHistoryModelFactory.toItemHistory(principal.getId());
-        itemHistoryService.insert(itemHistory);
+        ItemHistory itemHistory = createItemHistory(principal);
+
+        Template template = templateService.insert(Template.builder().valueFieldsIds(List.of()).build());
+
         itemService.insert(
-                ItemModelFactory.toItem(itemCreationForm, principal.getId(), image.getId(), itemHistory.getId())
+                ItemModelFactory.toItem(itemCreationForm,
+                        principal.getId(),
+                        image.getId(),
+                        itemHistory.getId(),
+                        template.getId())
         );
         return APIOk("Item created successfully");
+    }
+
+    private ItemHistory createItemHistory(Account principal) {
+        ItemHistory itemHistory = ItemHistoryModelFactory.toItemHistory(principal.getId());
+        itemHistoryService.insert(itemHistory);
+        return itemHistory;
     }
 
     @GetMapping("/all")
     private ResponseEntity<List<ItemView>> getAll() {
         return ResponseEntity.ok(
-                ItemViewFactory.toItemListView(itemService.getAll()).items()
+                ItemViewFactory.toItemListView(templateService, itemService.getAll()).items()
         );
     }
 
     @GetMapping("/category/{id}")
     private ResponseEntity<List<ItemView>> get(@PathVariable("id") String id) {
         return ResponseEntity.ok(
-                ItemViewFactory.toItemListView(itemService.findByCategoryId(id)).items()
+                ItemViewFactory.toItemListView(templateService, itemService.findByCategoryId(id)).items()
         );
+    }
+
+    @DeleteMapping("/{id}")
+    private ResponseEntity<APIResponse> delete(@PathVariable("id") String id) {
+        itemService.deleteById(id);
+        return APIOk("Item deleted successfully");
     }
 }
