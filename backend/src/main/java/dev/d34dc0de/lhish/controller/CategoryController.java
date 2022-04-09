@@ -68,4 +68,10 @@ public class CategoryController extends BaseController {
                 CategoryViewFactory.toCategoryView(categoryService.getById(id))
         );
     }
+
+    @DeleteMapping("/{id}")
+    private ResponseEntity<APIResponse> delete(@PathVariable("id") String id) {
+        categoryService.deleteById(id);
+        return ResponseEntity.ok(APIResponse.ok("Category successfully deleted"));
+    }
 }
