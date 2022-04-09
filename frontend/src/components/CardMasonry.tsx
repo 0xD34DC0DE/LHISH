@@ -1,11 +1,9 @@
 import React from "react";
 import Masonry from "@mui/lab/Masonry";
-import {IItemCardComponent} from "./ItemCard";
-import {ICategoryCardComponent} from "./CategoryCard";
 import {Container} from "@mui/material";
 
 interface CardMasonryParams {
-    cards: (IItemCardComponent | ICategoryCardComponent)[]
+    cards: React.ReactElement[]
 }
 
 export const CardMasonry = ({cards}: CardMasonryParams) => {
