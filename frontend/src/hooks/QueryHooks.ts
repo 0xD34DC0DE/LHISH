@@ -6,6 +6,10 @@ interface APIError {
     error?: string
 }
 
+interface APISuccess {
+    success?: string
+}
+
 type ValueType = Exclude<any, Function & File>
 
 function isFunction(object: any) {
@@ -197,9 +201,56 @@ export const useAuthFormPost = <R>(url: string,
     );
 }
 
+export const useDelete = (url: string | (() => string), headers: [string, ValueType | Function][] = []):
+    [
+        (...params: [string, ValueType | Function][]) => void,
+            string | null,
+            string | null,
+        () => void
+    ] => {
+    const [data, setData] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+
+    const reset = () => {
+        setData(null);
+        setError(null)
+    }
+
+    const getUrl = () => {
+        return typeof url === "function" ? url() : url;
+    }
+
+    const del = (...params: [string, ValueType | Function][]) =>
+        axios.delete<APISuccess & APIError>(getUrl(), {
+            params: callGetters(params),
+            headers: callGetters(headers)
+        })
+            .then(value => {
+                if (value.data.error) {
+                    setData(null);
+                    setError(value.data.error);
+                } else {
+                    setData(value.data?.success ?? "Success");
+                    setError(null);
+                }
+            })
+            .catch(error => {
+                console.error(error.message)
+                setError(error.message);
+                setData(null);
+            });
+
+    return [del, data, error, reset];
+}
+
 //TODO use error setter instead of returning error state
 
 export const useAuthGet = <R>(url: string | (() => string), headers: [string, ValueType | Function][] = []) => {
     const {session} = useContext(SessionContext);
     return useGet<R>(url, [['Authorization', `Bearer ${session.token}`], ...headers]);
+}
+
+export const useAuthDelete = (url: string | (() => string), headers: [string, ValueType | Function][] = []) => {
+    const {session} = useContext(SessionContext);
+    return useDelete(url, [['Authorization', `Bearer ${session.token}`], ...headers]);
 }
