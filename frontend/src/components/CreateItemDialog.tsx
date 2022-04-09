@@ -6,7 +6,9 @@ import {
     DialogContent,
     DialogTitle,
     FormControl,
+    Grid,
     InputLabel,
+    Stack,
     TextField
 } from "@mui/material";
 import React, {useEffect, useState} from "react";
@@ -15,6 +17,8 @@ import {useAuthFormPost} from "../hooks/QueryHooks";
 import {ErrorMessage} from "./ErrorMessage";
 import {SuccessMessage} from "./SucessMessage";
 import {CategoryDropDown} from "./CategoryDropDown";
+import {ItemCard} from "./ItemCard";
+import {Availability} from "../views/ItemView";
 
 export interface CreateItemDialogProps {
     innerRef: React.ForwardedRef<DialogBaseRef>;
@@ -67,34 +71,55 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
     }, [formError]);
 
     return (
-        <DialogBase ref={innerRef} fullWidth maxWidth={"sm"} onClose={onClose}>
+        <DialogBase ref={innerRef} fullWidth maxWidth={"lg"} onClose={onClose} >
             <DialogTitle>Create Item</DialogTitle>
             <DialogContent>
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    id="name"
-                    label="Item Name"
-                    type="text"
-                    fullWidth
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setItemName(e.target.value)}
-                />
+                <Grid container direction={"row"} spacing={2} justifyContent={"space-around"}>
+                    <Grid item xs={4}>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="name"
+                            label="Item Name"
+                            type="text"
+                            fullWidth
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setItemName(e.target.value)}
+                        />
 
-                <TextField
-                    margin="dense"
-                    id="name"
-                    label="Description"
-                    type="text"
-                    fullWidth
-                    multiline
-                    rows={4}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
-                />
-                <FormControl fullWidth sx={{marginTop: 1, marginBottom: 1}}>
-                    <InputLabel id="category-id-select-label">Category</InputLabel>
-                    <CategoryDropDown setError={setError} setCategoryId={setCategoryId}/>
-                </FormControl>
-                <FileUploadButton onFileChanged={setFile} accept={"image/*"} id={"image-upload"}/>
+                        <TextField
+                            margin="dense"
+                            id="name"
+                            label="Description"
+                            type="text"
+                            fullWidth
+                            multiline
+                            rows={4}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
+                        />
+                        <FormControl fullWidth sx={{marginTop: 1, marginBottom: 1}}>
+                            <InputLabel id="category-id-select-label">Category</InputLabel>
+                            <CategoryDropDown setError={setError} setCategoryId={setCategoryId}/>
+                        </FormControl>
+                        <FileUploadButton onFileChanged={setFile} accept={"image/*"} id={"image-upload"}/>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <Stack>
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="name"
+                                label="Item Name"
+                                type="text"
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setItemName(e.target.value)}
+                            />
+                        </Stack>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Box sx={{width: "100%"}}>
+                            <ItemCard onDelete={() => {}} id={"1"} name={"Example"} description={""} imageId={""} availability={Availability.Empty} historyId={""}/>
+                        </Box>
+                    </Grid>
+                </Grid>
             </DialogContent>
 
             <DialogActions>
