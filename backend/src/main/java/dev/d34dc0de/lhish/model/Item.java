@@ -21,4 +21,5 @@ public class Item {
     private String userId;
     private String imageId;
     private String historyId;
+    private String templateId;
 }
