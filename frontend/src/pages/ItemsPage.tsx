@@ -28,20 +28,28 @@ const ItemsPage = () => {
     const [getCategory, category, categoryError, categoryReset] =
         useAuthGet<ICategory>(`http://localhost:8080/category/${params.categoryId}`);
 
-    useEffect(() => {
+    const reset = () => {
         getItems();
         categoryReset();
         if (isInCategory)
             getCategory();
+    }
+
+    useEffect(() => {
+        reset();
     }, [location]);
 
     const onAddButtonClick = () => {
         dialogRef.current?.openDialog();
     }
 
+    const onItemDelete = () => {
+        reset();
+    }
+
     const mapItems = (items: IItem[]) => {
         return items.map(item => {
-            return <ItemCard {...item} key={item.id}/>
+            return <ItemCard {...item} onDelete={onItemDelete} key={item.id}/>
         });
     }
 
