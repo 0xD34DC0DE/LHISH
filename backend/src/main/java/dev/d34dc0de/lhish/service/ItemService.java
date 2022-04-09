@@ -22,7 +22,7 @@ public class ItemService {
     }
 
     public Item insert(Item item) throws NotFoundException {
-        if(item.getCategoryId() == null) {
+        if (item.getCategoryId() == null) {
             throw new NullFieldException("Category id cannot be null");
         }
 
@@ -31,6 +31,11 @@ public class ItemService {
         }
 
         return itemRepository.insert(item);
+    }
+
+    public void deleteById(String id) {
+        // TODO dont forget to delete in cascade
+        itemRepository.deleteById(id);
     }
 
     public List<Item> getAll() {
@@ -42,7 +47,7 @@ public class ItemService {
     }
 
     public List<Item> findByCategoryId(String categoryId) {
-        if(categoryService.findById(categoryId).isEmpty()) {
+        if (categoryService.findById(categoryId).isEmpty()) {
             throw new NotFoundException("Category", categoryId);
         }
         return itemRepository.findByCategoryId(categoryId);
