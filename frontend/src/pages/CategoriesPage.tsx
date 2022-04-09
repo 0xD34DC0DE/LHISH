@@ -19,9 +19,13 @@ const CategoriesPage = () => {
        dialogRef.current?.openDialog();
     }
 
+    const onDelete = () => {
+        get()
+    }
+
     const mapCategories = (categories: ICategory[]) => {
         return categories.map(category => {
-            return <CategoryCard {...category} key={category.id}/>
+            return <CategoryCard {...category} onDelete={onDelete} key={category.id}/>
         });
     }
 
