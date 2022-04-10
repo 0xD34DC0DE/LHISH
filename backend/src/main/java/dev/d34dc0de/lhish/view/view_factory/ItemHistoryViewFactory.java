@@ -21,6 +21,11 @@ public abstract class ItemHistoryViewFactory {
                                 .map(ItemHistoryEntry::actionDescription)
                                 .toList()
                 )
+                .timestamps(
+                        itemHistory.getEntries().stream()
+                                .map(ItemHistoryEntry::timestamp)
+                                .toList()
+                )
                 .build();
     }
 }

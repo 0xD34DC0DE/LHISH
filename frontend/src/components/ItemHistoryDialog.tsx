@@ -12,13 +12,15 @@ export interface ItemHistoryDialogProps {
 }
 
 const columns: GridColDef[] = [
-    {field: 'accountName', headerName: 'Account name', width: 150},
-    {field: 'action', headerName: 'Action', width: 400},
+    {field: 'accountName', headerName: 'Account name', flex: 0.2},
+    {field: 'action', headerName: 'Action', flex: 0.55},
+    {field: 'timestamp', headerName: 'At', flex: 0.25},
 ]
 
 interface ItemAction {
     accountName: string;
     action: string;
+    timestamp: Date;
 }
 
 export const ItemHistoryDialog = ({innerRef, itemHistoryId}: ItemHistoryDialogProps) => {
@@ -32,7 +34,8 @@ export const ItemHistoryDialog = ({innerRef, itemHistoryId}: ItemHistoryDialogPr
             return {
                 id: index,
                 accountName: itemHistoryAction.accountNames[index],
-                action: action
+                action: action,
+                timestamp: itemHistoryAction.timestamps[index]
             }
         })
     }
@@ -50,7 +53,7 @@ export const ItemHistoryDialog = ({innerRef, itemHistoryId}: ItemHistoryDialogPr
     }
 
     return (
-        <DialogBase ref={innerRef} onOpen={onOpen} fullWidth maxWidth={"sm"}>
+        <DialogBase ref={innerRef} onOpen={onOpen} fullWidth maxWidth={"md"}>
             <DialogTitle>Item History</DialogTitle>
             <DialogContent>
                 {!hasRows && <Typography>No history available</Typography>}

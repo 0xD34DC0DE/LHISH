@@ -3,7 +3,7 @@ import StarIcon from "@mui/icons-material/Star";
 import {yellow} from "@mui/material/colors";
 import {CardMasonry} from "../components/CardMasonry";
 import {PageHeader} from "../components/PageHeader";
-import CardFactory from "../services/CardFactory";
+
 
 const FavoritesPage = () => {
     return <>
@@ -12,7 +12,7 @@ const FavoritesPage = () => {
         }/>
 
         {/*TODO add column number change when going small (responsive)*/}
-        <CardMasonry cards={CardFactory(10, ["item", "category"])}/>
+        <CardMasonry cards={[]}/>
     </>;
 }
 

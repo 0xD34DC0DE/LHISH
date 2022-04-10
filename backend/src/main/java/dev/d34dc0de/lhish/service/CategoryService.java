@@ -42,4 +42,9 @@ public class CategoryService {
     public Category getById(String id) {
         return categoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Category", id));
     }
+
+    public void deleteById(String id) {
+        //TODO don't forget to delete by cascade
+        categoryRepository.deleteById(id);
+    }
 }

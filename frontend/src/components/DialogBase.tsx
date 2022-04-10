@@ -1,8 +1,9 @@
 import {Dialog, DialogProps} from "@mui/material";
-import React, {forwardRef, useImperativeHandle, useState} from "react";
+import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 
 export interface DialogBaseRef {
     openDialog: () => void;
+    closeDialog: () => void;
 }
 
 export interface DialogBaseProps {
@@ -19,32 +20,39 @@ const DialogBase = forwardRef<DialogBaseRef, DialogBaseProps>((
         fullWidth = false,
         maxWidth = "md",
         onOpen,
-        onClose
+        onClose,
     }: DialogBaseProps, ref) => {
     const [open, setOpen] = useState(false);
 
-    useImperativeHandle(ref, () => ({
-        openDialog: () => {
-            setOpen(true);
-            if (onOpen) {
-                onOpen();
-            }
-        },
-    }));
+    const openDialog = () => {
+        setOpen(true);
+        if (onOpen) {
+            onOpen();
+        }
+    }
 
-    const handleClose = () => {
+    const closeDialog = () => {
         setOpen(false);
         if (onClose) {
             onClose();
         }
     }
 
+    useImperativeHandle(ref, () => ({
+        openDialog: () => {
+            openDialog();
+        },
+        closeDialog: () => {
+            closeDialog();
+        }
+    }));
+
     return (
         <Dialog
             maxWidth={maxWidth} // why...
             fullWidth={fullWidth}
             open={open}
-            onClose={handleClose}
+            onClose={closeDialog}
         >
             {children}
         </Dialog>
