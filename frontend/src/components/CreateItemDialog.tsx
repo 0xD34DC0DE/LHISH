@@ -11,7 +11,7 @@ import {
     Stack,
     TextField
 } from "@mui/material";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {FileUploadButton} from "./FileUploadButton";
 import {useAuthFormPost} from "../hooks/QueryHooks";
 import {ErrorMessage} from "./ErrorMessage";
@@ -19,6 +19,8 @@ import {SuccessMessage} from "./SucessMessage";
 import {CategoryDropDown} from "./CategoryDropDown";
 import {ItemCard} from "./ItemCard";
 import {Availability} from "../views/ItemView";
+import {ValueTypeDropdown, ValueTypeDropdownRef} from "../card_field_components/ValueTypeDropdown";
+import {InputFieldFactory, InputFieldFactoryRef} from "../card_field_components/InputFieldFactory";
 
 export interface CreateItemDialogProps {
     innerRef: React.ForwardedRef<DialogBaseRef>;
@@ -32,6 +34,8 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
     const [file, setFile] = useState<File>();
     const [canCreate, setCanCreate] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const fieldFactoryRef = useRef<InputFieldFactoryRef>(null);
+    const valueTypeDropdownRef = useRef<ValueTypeDropdownRef>(null);
 
     const [postForm, formData, formError, formReset] = useAuthFormPost(
         "http://localhost:8080/item/create"
@@ -70,12 +74,21 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
         setError(formError);
     }, [formError]);
 
+    const addField = () => {
+        let fieldType = valueTypeDropdownRef.current?.getValueType() ?? null;
+        if (fieldType !== null) {
+            fieldFactoryRef.current?.addField(fieldType);
+        }
+    }
+
+    //TODO toggle switch for batch mode: preserve template and clear fields
+
     return (
-        <DialogBase ref={innerRef} fullWidth maxWidth={"lg"} onClose={onClose} >
+        <DialogBase ref={innerRef} fullWidth maxWidth={"xl"} onClose={onClose}>
             <DialogTitle>Create Item</DialogTitle>
             <DialogContent>
                 <Grid container direction={"row"} spacing={2} justifyContent={"space-around"}>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                         <TextField
                             autoFocus
                             margin="dense"
@@ -102,21 +115,30 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
                         </FormControl>
                         <FileUploadButton onFileChanged={setFile} accept={"image/*"} id={"image-upload"}/>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={5}>
                         <Stack>
-                            <TextField
-                                autoFocus
-                                margin="dense"
-                                id="name"
-                                label="Item Name"
-                                type="text"
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setItemName(e.target.value)}
-                            />
+                            <Stack direction={"row"}>
+                                <ValueTypeDropdown
+                                    label={"Type to add"}
+                                    sx={{display: "inline"}}
+                                    ref={valueTypeDropdownRef}
+                                />
+                                <Button variant={"contained"}
+                                        sx={{marginLeft: 1, marginTop: 1, marginBottom: 1}}
+                                        onClick={addField}
+                                >Add</Button>
+                            </Stack>
+                            <InputFieldFactory ref={fieldFactoryRef}/>
+                            <Button onClick={() => {
+                                console.log(fieldFactoryRef.current?.getValues())
+                            }}>TEST</Button>
                         </Stack>
                     </Grid>
                     <Grid item xs={2}>
                         <Box sx={{width: "100%"}}>
-                            <ItemCard onDelete={() => {}} id={"1"} name={"Example"} description={""} imageId={""} availability={Availability.Empty} historyId={""}/>
+                            <ItemCard onDelete={() => {
+                            }} id={"1"} name={"Example"} description={""} imageId={""} availability={Availability.Empty}
+                                      historyId={""}/>
                         </Box>
                     </Grid>
                 </Grid>
