@@ -26,7 +26,7 @@ export const ItemCard = ({id, name, description, imageId, availability, historyI
                 <CardMedia
                     component="img"
                     height="140"
-                    image={`http://localhost:8080/image/${imageId}`} // TODO replace with getImageUrl for authentication
+                    image={imageId == "" ? "" : `http://localhost:8080/image/${imageId}`}
                 />
                 <CardContent>
                     <Typography variant="h5">{name}</Typography>
