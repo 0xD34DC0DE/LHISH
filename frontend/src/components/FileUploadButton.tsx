@@ -5,11 +5,12 @@ export interface FileUploadButtonProps {
     id: string;
     accept: string;
     onFileChanged: (file: File) => void;
+    label?: string | null;
 }
 
 //https://javascript.plainenglish.io/how-to-add-a-file-input-button-and-display-a-preview-image-with-react-2568d9d849f5
 
-export const FileUploadButton = ({accept, id, onFileChanged}: FileUploadButtonProps) => {
+export const FileUploadButton = ({accept, id, onFileChanged, label = null}: FileUploadButtonProps) => {
     const [selectedFile, setSelectedFile] = useState<File>();
 
     const getFilename = (): string => selectedFile?.name ?? "";
@@ -24,7 +25,7 @@ export const FileUploadButton = ({accept, id, onFileChanged}: FileUploadButtonPr
         <Stack direction={"row"} sx={{marginTop: 1}}>
             <Button variant="contained" color="primary" component="label"
                     sx={{paddingTop: 1, paddingBottom: 1}}>
-                Upload File
+                {label ?? "Upload File"}
                 <input
                     accept={accept}
                     type="file"
