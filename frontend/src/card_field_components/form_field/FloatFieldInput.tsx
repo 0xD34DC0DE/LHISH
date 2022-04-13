@@ -1,25 +1,63 @@
-import {ValueFieldInput} from "./ValueFieldInput";
-import React, {forwardRef, useImperativeHandle} from "react";
-import {FormFieldRef} from "./FormFieldRef";
+import {ValueFieldInput} from "./base/ValueFieldInput";
+import React, {forwardRef, useEffect, useImperativeHandle} from "react";
+import {FormFieldRef} from "./base/FormFieldRef";
 import {useInput} from "../../hooks/InputHook";
 import {Stack, TextField} from "@mui/material";
+import {ValueType} from "../ValueTypes";
+import {useValidation} from "../../hooks/ValidationHook";
+import {Field} from "../Fields";
 
 export interface FloatFieldInputProps extends ValueFieldInput {
 }
 
 export const FloatFieldInput = forwardRef<FormFieldRef, FloatFieldInputProps>(
-    ({existingName}: FloatFieldInputProps, ref) => {
+    ({existingName, onFieldChange}: FloatFieldInputProps, ref) => {
         const [name, setName] = useInput();
         const [value, setValue, overrideValue] = useInput();
 
+        const [nameValidation, nameErrorProps] = useValidation(() => name === "" ? "Name is required" : null);
+        const [valueValidation, valueErrorProps] = useValidation(
+            () => isNaN(parseFloat(value)) ? "Value is required" : null
+        );
+
         useImperativeHandle(ref, () => ({
-            getName: () => name,
-            getValue: () => value,
+            getField: getField
         }));
 
+        const isValid = (skipErrorMessage: boolean = false) => {
+            return [
+                nameValidation(skipErrorMessage),
+                valueValidation(skipErrorMessage)
+            ].every(v => v);
+        }
+
+        const getField = (): Field | null => {
+            if (!isValid()) {
+                return null;
+            }
+            return {
+                type: ValueType.FLOAT,
+                name: name,
+                value: parseFloat(value),
+            };
+        }
+
+        useImperativeHandle(ref, () => ({
+            getField: getField
+        }));
+
+        useEffect(() => {
+            if(!isValid(true)) {
+                return;
+            }
+            let field = getField();
+            if (field !== null) {
+                onFieldChange(field);
+            }
+        }, [name, value]);
+
         const formatValue = (e: React.FocusEvent<HTMLInputElement>) => {
-            console.log("overrideValue");
-            if(value.indexOf('.') === -1) {
+            if (value.indexOf('.') === -1) {
                 overrideValue(value + '.0');
             }
         };
@@ -35,6 +73,7 @@ export const FloatFieldInput = forwardRef<FormFieldRef, FloatFieldInputProps>(
                     type="text"
                     fullWidth
                     onChange={setName}
+                    {...nameErrorProps}
                     sx={{marginRight: 1}}
                 />
                 <TextField
@@ -46,6 +85,7 @@ export const FloatFieldInput = forwardRef<FormFieldRef, FloatFieldInputProps>(
                     fullWidth
                     onChange={setValue}
                     onBlur={formatValue}
+                    {...valueErrorProps}
                     sx={{marginLeft: 1}}
                 />
             </Stack>
