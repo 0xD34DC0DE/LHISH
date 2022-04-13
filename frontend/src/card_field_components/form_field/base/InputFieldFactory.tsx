@@ -1,16 +1,18 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
-import {useAuthGet} from "../hooks/QueryHooks";
+import {useAuthGet} from "../../../hooks/QueryHooks";
 import {Stack} from "@mui/material";
 import {FieldInputMapper, FieldInputMapperRef} from "./FieldInputMapper";
-import {ValueType} from "../views/ValueTypes";
+import {ValueType} from "../../ValueTypes";
+import {Field} from "../../Fields";
 
 export interface InputFieldFactoryRef {
-    getValues: () => ({ name: string, value: string } | null) [];
+    getFields: () =>  (Field | null)[];
     addField: (valueType: ValueType, existingName?: string) => void;
 }
 
 export interface InputFieldFactoryProps {
     templateId?: string | null;
+    onFieldsChange: (field: Field, index: number) => void;
 }
 
 export interface Template {
@@ -19,7 +21,7 @@ export interface Template {
 }
 
 export const InputFieldFactory = forwardRef<InputFieldFactoryRef, InputFieldFactoryProps>(
-    ({templateId = null}: InputFieldFactoryProps, ref) => {
+    ({templateId = null, onFieldsChange}: InputFieldFactoryProps, ref) => {
         const [getTemplate, template, error, reset] = useAuthGet<Template[]>(
             () => `http://localhost:8080/template/${templateId}`
         );
@@ -27,8 +29,8 @@ export const InputFieldFactory = forwardRef<InputFieldFactoryRef, InputFieldFact
         const [fields, setFields] = useState<React.ReactElement[]>([]);
 
         useImperativeHandle(ref, () => ({
-            getValues: () => {
-                return refs.current.map(ref => ref?.getValue() ?? null);
+            getFields: () => {
+                return refs.current.map(ref => ref?.getField() ?? null);
             },
             addField: (valueType: ValueType, name: string | null = null) => {
                 refs.current.push(null);
@@ -40,6 +42,8 @@ export const InputFieldFactory = forwardRef<InputFieldFactoryRef, InputFieldFact
                             valueType={valueType}
                             name={name}
                             ref={ref => refs.current[index] = ref}
+                            index={index}
+                            onFieldChange={onFieldsChange}
                         />
                     ]
                 );
@@ -68,6 +72,8 @@ export const InputFieldFactory = forwardRef<InputFieldFactoryRef, InputFieldFact
                         ref={(element) => {
                             refs.current[index] = element
                         }}
+                        index={index}
+                        onFieldChange={onFieldsChange}
                     />
                 });
             }
