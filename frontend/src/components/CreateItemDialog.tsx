@@ -1,11 +1,11 @@
 import DialogBase, {DialogBaseRef} from "./DialogBase"
 import {
     Box,
-    Button,
+    Button, Checkbox,
     DialogActions,
     DialogContent,
     DialogTitle,
-    FormControl,
+    FormControl, FormControlLabel,
     Grid,
     InputLabel,
     Stack,
@@ -13,14 +13,17 @@ import {
 } from "@mui/material";
 import React, {useEffect, useRef, useState} from "react";
 import {FileUploadButton} from "./FileUploadButton";
-import {useAuthFormPost} from "../hooks/QueryHooks";
+import {useAuthFormPost, useAuthPost} from "../hooks/QueryHooks";
 import {ErrorMessage} from "./ErrorMessage";
 import {SuccessMessage} from "./SucessMessage";
 import {CategoryDropDown} from "./CategoryDropDown";
 import {ItemCard} from "./ItemCard";
-import {Availability} from "../views/ItemView";
-import {ValueTypeDropdown, ValueTypeDropdownRef} from "../card_field_components/ValueTypeDropdown";
-import {InputFieldFactory, InputFieldFactoryRef} from "../card_field_components/InputFieldFactory";
+import {ValueTypeDropdown, ValueTypeDropdownRef} from "../card_field_components/form_field/base/ValueTypeDropdown";
+import {InputFieldFactory, InputFieldFactoryRef} from "../card_field_components/form_field/base/InputFieldFactory";
+import {Field} from "../card_field_components/Fields";
+import {ValueType} from "../card_field_components/ValueTypes";
+import {TemplateDropDown} from "./TemplateDropDown";
+import {TemplateIdView} from "../views/TemplateIdView";
 
 export interface CreateItemDialogProps {
     innerRef: React.ForwardedRef<DialogBaseRef>;
@@ -31,14 +34,22 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
     const [itemName, setItemName] = useState<string | null>(null);
     const [description, setDescription] = useState<string | null>(null);
     const [categoryId, setCategoryId] = useState<string | null>(null);
+    const [templateId, setTemplateId] = useState<string | null>(null);
     const [file, setFile] = useState<File>();
     const [canCreate, setCanCreate] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const fieldFactoryRef = useRef<InputFieldFactoryRef>(null);
     const valueTypeDropdownRef = useRef<ValueTypeDropdownRef>(null);
+    const [fields, setFields] = useState<(Field | null)[]>([]);
+    const [existingTemplate, setExistingTemplate] = useState<boolean>(false);
+    const [sendingNewTemplate, setSendingNewTemplate] = useState(false);
 
     const [postForm, formData, formError, formReset] = useAuthFormPost(
         "http://localhost:8080/item/create"
+    );
+
+    const [postTemplate, templateData, templateError, templateReset] = useAuthPost<TemplateIdView>(
+        "http://localhost:8080/template/create"
     );
 
     useEffect(() => {
@@ -57,13 +68,50 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
             setError("Item name, category and image are required");
             return;
         }
-        postForm(
-            ["name", itemName],
-            ["description", description ?? ""],
-            ["image", file],
-            ["categoryId", categoryId]
-        );
+
+        if (!existingTemplate) {
+            setSendingNewTemplate(true);
+            postTemplate(
+                ["fields", fields.map(field => {
+                    return {
+                        name: field?.name,
+                        type: field?.type,
+                        value: null
+                    }
+                })]
+            );
+        }
     }
+
+    useEffect(() => {
+        if (!templateError && templateData && templateData.id !== "") {
+
+            if (sendingNewTemplate) {
+                setSendingNewTemplate(false);
+
+                postTemplate(
+                    ["fields", fields.map(field => {
+                        return {
+                            name: field?.name,
+                            type: field?.type,
+                            value: field?.value
+                        }
+                    })]
+                );
+                return;
+            }
+
+            postForm(
+                ["name", itemName],
+                ["description", description ?? ""],
+                ["image", file],
+                ["categoryId", categoryId],
+                ["templateId", templateData.id]
+            );
+        } else {
+            setError("Failed to create template");
+        }
+    }, [templateData]);
 
     useEffect(() => {
         setError(null);
@@ -78,7 +126,16 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
         let fieldType = valueTypeDropdownRef.current?.getValueType() ?? null;
         if (fieldType !== null) {
             fieldFactoryRef.current?.addField(fieldType);
+            setFields(fields.concat([null]));
         }
+    }
+
+    const updateField = (field: Field, index: number) => {
+        setFields(f => {
+            let updatedFields = [...f];
+            updatedFields[index] = field;
+            return updatedFields;
+        });
     }
 
     //TODO toggle switch for batch mode: preserve template and clear fields
@@ -98,7 +155,6 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
                             fullWidth
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setItemName(e.target.value)}
                         />
-
                         <TextField
                             margin="dense"
                             id="name"
@@ -113,10 +169,27 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
                             <InputLabel id="category-id-select-label">Category</InputLabel>
                             <CategoryDropDown setError={setError} setCategoryId={setCategoryId}/>
                         </FormControl>
-                        <FileUploadButton onFileChanged={setFile} accept={"image/*"} id={"image-upload"}/>
+                        <FileUploadButton
+                            onFileChanged={setFile}
+                            accept={"image/*"}
+                            id={"image-upload"}
+                            label={"Upload image"}
+                        />
                     </Grid>
                     <Grid item xs={5}>
-                        <Stack>
+                        <FormControlLabel
+                            label="Existing template"
+                            control={
+                                <Checkbox
+                                    value={existingTemplate}
+                                    onChange={
+                                        (e: React.ChangeEvent<HTMLInputElement>) =>
+                                            setExistingTemplate(e.target.checked)
+                                    }
+                                />
+                            }
+                        />
+                        {!existingTemplate && <Stack>
                             <Stack direction={"row"}>
                                 <ValueTypeDropdown
                                     label={"Type to add"}
@@ -128,17 +201,34 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
                                         onClick={addField}
                                 >Add</Button>
                             </Stack>
-                            <InputFieldFactory ref={fieldFactoryRef}/>
+                            <InputFieldFactory
+                                onFieldsChange={updateField}
+                                ref={fieldFactoryRef}
+                            />
                             <Button onClick={() => {
-                                console.log(fieldFactoryRef.current?.getValues())
+                                console.log(fieldFactoryRef.current?.getFields())
                             }}>TEST</Button>
-                        </Stack>
+                        </Stack>}
+                        {existingTemplate &&
+                            <Stack>
+                                <FormControl fullWidth sx={{marginTop: 1, marginBottom: 1}}>
+                                    <InputLabel id="template-id-select-label">Template</InputLabel>
+                                    <TemplateDropDown setTemplateId={setTemplateId} setError={setError}/>
+                                </FormControl>
+                            </Stack>
+                        }
                     </Grid>
                     <Grid item xs={2}>
                         <Box sx={{width: "100%"}}>
-                            <ItemCard onDelete={() => {
-                            }} id={"1"} name={"Example"} description={""} imageId={""} availability={Availability.Empty}
-                                      historyId={""}/>
+                            <ItemCard
+                                onDelete={() => {
+                                }}
+                                name={itemName ?? "Example"}
+                                description={description ?? "Description"}
+                                imageId={""}
+                                historyId={""}
+                                fields={fields}
+                            />
                         </Box>
                     </Grid>
                 </Grid>
