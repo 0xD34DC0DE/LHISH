@@ -1,7 +1,10 @@
 package dev.d34dc0de.lhish.service;
 
 import dev.d34dc0de.lhish.exceptions.NotFoundException;
+import dev.d34dc0de.lhish.form.TemplateCreationForm;
+import dev.d34dc0de.lhish.form.model_factory.TemplateModelFactory;
 import dev.d34dc0de.lhish.model.Template;
+import dev.d34dc0de.lhish.model.ViewFields.ValueField;
 import dev.d34dc0de.lhish.repository.TemplateRepository;
 import org.springframework.stereotype.Service;
 
@@ -31,5 +34,23 @@ public class TemplateService {
 
     public List<Template> findAllTemplate() {
         return templateRepository.findAllByIsInstanceFalse();
+    }
+
+    public Template insertTemplateFromForm(TemplateCreationForm templateCreationForm) {
+        if (templateCreationForm.isNewTemplate()) {
+            insertNonInstanceTemplate(templateCreationForm);
+        }
+        return insert(TemplateModelFactory.toModel(templateCreationForm, true));
+    }
+
+    private void insertNonInstanceTemplate(TemplateCreationForm templateCreationForm) {
+        List<ValueField> templateFields = templateCreationForm.fields().stream()
+                .peek(valueField -> valueField.setValue(null))
+                .toList();
+        TemplateCreationForm templateOnly = TemplateCreationForm.builder()
+                .name(templateCreationForm.name())
+                .fields(templateFields)
+                .build();
+        insert(TemplateModelFactory.toModel(templateOnly, false));
     }
 }

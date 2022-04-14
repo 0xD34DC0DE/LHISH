@@ -5,7 +5,7 @@ import lombok.Builder;
 
 import java.util.List;
 
-public record TemplateCreationForm(String name, List<ValueField> fields, Boolean newTemplate) {
+public record TemplateCreationForm(String name, List<ValueField> fields, Boolean isNewTemplate) {
     @Builder
     public TemplateCreationForm{}
 }
