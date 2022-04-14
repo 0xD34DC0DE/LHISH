@@ -42,14 +42,13 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
     const valueTypeDropdownRef = useRef<ValueTypeDropdownRef>(null);
     const [fields, setFields] = useState<(Field | null)[]>([]);
     const [existingTemplate, setExistingTemplate] = useState<boolean>(false);
-    const [sendingNewTemplate, setSendingNewTemplate] = useState(false);
     const [templateName, setTemplateName] = useState("");
 
     const [postForm, formData, formError, formReset] = useAuthFormPost(
         "http://localhost:8080/item/create"
     );
 
-    const [postTemplate, templateData, templateError, templateReset] = useAuthPost<TemplateIdView>(
+    const [postTemplate, templateData, templateError, templateReset] = useAuthPost<string>(
         "http://localhost:8080/template/create"
     );
 
@@ -61,6 +60,7 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
 
     const onClose = () => {
         formReset();
+        templateReset();
         setCategoryId(null);
     }
 
@@ -70,64 +70,34 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
             return;
         }
 
-        if (!existingTemplate) {
-            if(templateName === "") {
-                setError("Template name is required");
-                return;
-            }
-
-            setSendingNewTemplate(true);
-
-            postTemplate(
-                ["name", templateName],
-                ["fields", fields.map(field => {
-                    return {
-                        name: field?.name,
-                        type: field?.type,
-                        value: null
-                    }
-                })]
-            );
-        } else {
-            postTemplate(
-                ["fields", fields.map(field => {
-                    return {
-                        name: field?.name,
-                        type: field?.type,
-                        value: field?.value
-                    }
-                })]
-            );
+        if (!existingTemplate && templateName === "") {
+            setError("Template name is required");
+            return;
         }
+
+        postTemplate(
+            ["name", templateName],
+            ["isNewTemplate", !existingTemplate],
+            ["fields", fields.map(field => {
+                return {
+                    name: field?.name,
+                    type: field?.type,
+                    value: field?.value
+                }
+            })]
+        );
+
     }
 
     useEffect(() => {
-        if (!templateError && templateData && templateData.id !== "") {
-
-            if (sendingNewTemplate) {
-                setSendingNewTemplate(false);
-
-                postTemplate(
-                    ["fields", fields.map(field => {
-                        return {
-                            name: field?.name,
-                            type: field?.type,
-                            value: field?.value
-                        }
-                    })]
-                );
-                return;
-            }
-
+        if (templateData && templateData !== "") {
             postForm(
                 ["name", itemName],
                 ["description", description ?? ""],
                 ["image", file],
                 ["categoryId", categoryId],
-                ["templateId", templateData.id]
+                ["templateId", templateData]
             );
-        } else {
-            setError("Failed to create template");
         }
     }, [templateData]);
 
@@ -139,6 +109,10 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
     useEffect(() => {
         setError(formError);
     }, [formError]);
+
+    useEffect(() => {
+        setError(templateError);
+    }, [templateError]);
 
     const addField = () => {
         let fieldType = valueTypeDropdownRef.current?.getValueType() ?? null;
@@ -241,6 +215,11 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
                                 <FormControl fullWidth sx={{marginTop: 1, marginBottom: 1}}>
                                     <InputLabel id="template-id-select-label">Template</InputLabel>
                                     <TemplateDropDown setTemplateId={setTemplateId} setError={setError}/>
+                                    <InputFieldFactory
+                                        templateId={templateId === "" ? null : templateId}
+                                        onFieldsChange={updateField}
+                                        ref={fieldFactoryRef}
+                                    />
                                 </FormControl>
                             </Stack>
                         }
