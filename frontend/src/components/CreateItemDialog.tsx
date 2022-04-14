@@ -43,6 +43,7 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
     const [fields, setFields] = useState<(Field | null)[]>([]);
     const [existingTemplate, setExistingTemplate] = useState<boolean>(false);
     const [sendingNewTemplate, setSendingNewTemplate] = useState(false);
+    const [templateName, setTemplateName] = useState("");
 
     const [postForm, formData, formError, formReset] = useAuthFormPost(
         "http://localhost:8080/item/create"
@@ -70,13 +71,30 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
         }
 
         if (!existingTemplate) {
+            if(templateName === "") {
+                setError("Template name is required");
+                return;
+            }
+
             setSendingNewTemplate(true);
+
             postTemplate(
+                ["name", templateName],
                 ["fields", fields.map(field => {
                     return {
                         name: field?.name,
                         type: field?.type,
                         value: null
+                    }
+                })]
+            );
+        } else {
+            postTemplate(
+                ["fields", fields.map(field => {
+                    return {
+                        name: field?.name,
+                        type: field?.type,
+                        value: field?.value
                     }
                 })]
             );
@@ -190,6 +208,15 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
                             }
                         />
                         {!existingTemplate && <Stack>
+                            <TextField
+                                autoFocus
+                                margin="dense"
+                                id="template-name"
+                                label="Template name"
+                                type="text"
+                                fullWidth
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTemplateName(e.target.value)}
+                            />
                             <Stack direction={"row"}>
                                 <ValueTypeDropdown
                                     label={"Type to add"}
