@@ -1,5 +1,5 @@
-import {ValueField} from "./ValueField";
-import {Typography} from "@mui/material";
+import {ValueField} from "./base/ValueField";
+import {Box, Typography} from "@mui/material";
 
 export interface TextFieldProps extends ValueField {
     value: string;
@@ -7,9 +7,9 @@ export interface TextFieldProps extends ValueField {
 
 export const TextField = ({value, name}: TextFieldProps) => {
     return (
-        <>
-            <Typography variant="body1" display={"inline"}>{name}</Typography>
-            <Typography display={"inline"}>{value}</Typography>
-        </>
+        <Box>
+            <Typography variant="body2" display={"inline"}>{name}: </Typography>
+            <Typography variant="body2" display={"inline"}>{value}</Typography>
+        </Box>
     );
 };
