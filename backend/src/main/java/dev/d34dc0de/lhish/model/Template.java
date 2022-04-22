@@ -1,6 +1,5 @@
 package dev.d34dc0de.lhish.model;
 
-import dev.d34dc0de.lhish.model.ViewFields.ValueField;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
