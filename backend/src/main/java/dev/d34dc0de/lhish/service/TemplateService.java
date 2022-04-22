@@ -4,7 +4,7 @@ import dev.d34dc0de.lhish.exceptions.NotFoundException;
 import dev.d34dc0de.lhish.form.TemplateCreationForm;
 import dev.d34dc0de.lhish.form.model_factory.TemplateModelFactory;
 import dev.d34dc0de.lhish.model.Template;
-import dev.d34dc0de.lhish.model.ViewFields.ValueField;
+import dev.d34dc0de.lhish.model.ValueField;
 import dev.d34dc0de.lhish.repository.TemplateRepository;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +32,11 @@ public class TemplateService {
         return findById(templateId).orElseThrow(() -> new NotFoundException("Template", templateId));
     }
 
-    public List<Template> findAllTemplate() {
+    public void deleteById(String id) {
+        templateRepository.deleteById(id);
+    }
+
+    public List<Template> findAllNonInstanceTemplate() {
         return templateRepository.findAllByIsInstanceFalse();
     }
 
@@ -40,17 +44,25 @@ public class TemplateService {
         if (templateCreationForm.isNewTemplate()) {
             insertNonInstanceTemplate(templateCreationForm);
         }
-        return insert(TemplateModelFactory.toModel(templateCreationForm, true));
+        return insert(TemplateModelFactory.toInstanceTemplateModel(templateCreationForm));
     }
 
     private void insertNonInstanceTemplate(TemplateCreationForm templateCreationForm) {
-        List<ValueField> templateFields = templateCreationForm.fields().stream()
-                .peek(valueField -> valueField.setValue(null))
-                .toList();
+        List<ValueField> templateFields = getValueFieldsWithoutValues(templateCreationForm);
         TemplateCreationForm templateOnly = TemplateCreationForm.builder()
                 .name(templateCreationForm.name())
                 .fields(templateFields)
                 .build();
-        insert(TemplateModelFactory.toModel(templateOnly, false));
+        insert(TemplateModelFactory.toNonInstanceTemplateModel(templateOnly));
+    }
+
+    private List<ValueField> getValueFieldsWithoutValues(TemplateCreationForm templateCreationForm) {
+        return templateCreationForm.fields().stream()
+                .peek(valueField -> {
+                    if(valueField.getValues().containsKey("value")) {
+                        valueField.getValues().replace("value", null);
+                    }
+                })
+                .toList();
     }
 }
