@@ -32,7 +32,7 @@ public abstract class ItemViewFactory {
                 .description(item.getDescription())
                 .imageId(item.getImageId())
                 .historyId(item.getHistoryId())
-                .valueFieldViewList(fields)
+                .fields(fields)
                 .build();
     }
 
