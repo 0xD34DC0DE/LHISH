@@ -1,6 +1,10 @@
 import {useState} from "react";
 
 
+/**
+ * Hook for validating form fields
+ * @param validator - validator function, returns error message if invalid or null
+ */
 export const useValidation = (validator: () => string | null):
     [
         (skipMessage?: boolean) => boolean,
