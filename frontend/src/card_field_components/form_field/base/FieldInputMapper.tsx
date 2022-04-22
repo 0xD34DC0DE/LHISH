@@ -15,12 +15,12 @@ export interface FieldInputMapperRef {
 export interface FieldInputMapperProps {
     valueType: ValueType;
     name: string | null;
-    index: number;
-    onFieldChange: (field: Field, index: number) => void;
+    value?: any;
+    onFieldChange: () => void;
 }
 
 export const FieldInputMapper = forwardRef<FieldInputMapperRef, FieldInputMapperProps>(
-    ({valueType, name, onFieldChange, index}: FieldInputMapperProps, ref) => {
+    ({valueType, name, value, onFieldChange}: FieldInputMapperProps, ref) => {
         const inputRef = useRef<FormFieldRef>(null);
 
         useImperativeHandle(ref, () => ({
@@ -36,9 +36,8 @@ export const FieldInputMapper = forwardRef<FieldInputMapperRef, FieldInputMapper
             return {
                 existingName: name ?? null,
                 ref: inputRef,
-                onFieldChange: (field: Field) => {
-                    onFieldChange(field, index);
-                }
+                onFieldChange: onFieldChange,
+                existingValue: value
             }
         }
 
