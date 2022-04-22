@@ -1,29 +1,14 @@
 import DialogBase, {DialogBaseRef} from "./DialogBase"
-import {
-    Box,
-    Button, Checkbox,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    FormControl, FormControlLabel,
-    Grid,
-    InputLabel,
-    Stack,
-    TextField
-} from "@mui/material";
+import {Box, Button, DialogActions, DialogContent, DialogTitle, Grid} from "@mui/material";
 import React, {useEffect, useRef, useState} from "react";
-import {FileUploadButton} from "./FileUploadButton";
-import {useAuthFormPost, useAuthPost} from "../hooks/QueryHooks";
+import {useAuthFormPost} from "../hooks/QueryHooks";
 import {ErrorMessage} from "./ErrorMessage";
 import {SuccessMessage} from "./SucessMessage";
-import {CategoryDropDown} from "./CategoryDropDown";
 import {ItemCard} from "./ItemCard";
-import {ValueTypeDropdown, ValueTypeDropdownRef} from "../card_field_components/form_field/base/ValueTypeDropdown";
-import {InputFieldFactory, InputFieldFactoryRef} from "../card_field_components/form_field/base/InputFieldFactory";
 import {Field} from "../card_field_components/Fields";
-import {ValueType} from "../card_field_components/ValueTypes";
-import {TemplateDropDown} from "./TemplateDropDown";
-import {TemplateIdView} from "../views/TemplateIdView";
+import {ItemBasicData, ItemBasicDataForm, ItemBasicDataFormRef} from "./ItemBasicDataForm";
+import {ItemInputFieldsForm, ItemInputFieldsFormRef} from "./ItemInputFieldsForm";
+import {PreviewItemCard} from "./PreviewItemCard";
 
 export interface CreateItemDialogProps {
     innerRef: React.ForwardedRef<DialogBaseRef>;
@@ -31,25 +16,18 @@ export interface CreateItemDialogProps {
 }
 
 export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProps) => {
-    const [itemName, setItemName] = useState<string | null>(null);
-    const [description, setDescription] = useState<string | null>(null);
-    const [categoryId, setCategoryId] = useState<string | null>(null);
-    const [templateId, setTemplateId] = useState<string | null>(null);
-    const [file, setFile] = useState<File>();
-    const [canCreate, setCanCreate] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const fieldFactoryRef = useRef<InputFieldFactoryRef>(null);
-    const valueTypeDropdownRef = useRef<ValueTypeDropdownRef>(null);
+
+    const itemBasicDataFormRef = useRef<ItemBasicDataFormRef>(null);
+    const [itemBasicData, setItemBasicData] = useState<ItemBasicData | null>(null);
+
+    const itemInputFieldsFormRef = useRef<ItemInputFieldsFormRef>(null);
     const [fields, setFields] = useState<(Field | null)[]>([]);
-    const [existingTemplate, setExistingTemplate] = useState<boolean>(false);
-    const [templateName, setTemplateName] = useState("");
+
+    const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
 
     const [postForm, formData, formError, formReset] = useAuthFormPost(
         "http://localhost:8080/item/create"
-    );
-
-    const [postTemplate, templateData, templateError, templateReset] = useAuthPost<string>(
-        "http://localhost:8080/template/create"
     );
 
     useEffect(() => {
@@ -60,180 +38,78 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
 
     const onClose = () => {
         formReset();
-        templateReset();
-        setCategoryId(null);
     }
 
-    const onSubmit = () => {
-        if (!canCreate) {
-            setError("Item name, category and image are required");
-            return;
-        }
-
-        if (!existingTemplate && templateName === "") {
-            setError("Template name is required");
-            return;
-        }
-
-        postTemplate(
-            ["name", templateName],
-            ["isNewTemplate", !existingTemplate],
-            ["fields", fields.map(field => {
-                return {
-                    name: field?.name,
-                    type: field?.type,
-                    value: field?.value
-                }
-            })]
-        );
-
-    }
-
-    useEffect(() => {
-        if (templateData && templateData !== "") {
-            postForm(
-                ["name", itemName],
-                ["description", description ?? ""],
-                ["image", file],
-                ["categoryId", categoryId],
-                ["templateId", templateData]
-            );
-        }
-    }, [templateData]);
-
-    useEffect(() => {
+    const createItem = () => {
         setError(null);
-        setCanCreate([itemName, categoryId, file].every(x => x !== null));
-    }, [categoryId, itemName, file]);
+
+        if(!itemBasicDataFormRef.current?.validate()) {
+            return;
+        }
+
+        if (!itemInputFieldsFormRef.current?.validate()) {
+            return;
+        }
+
+        itemInputFieldsFormRef.current?.createTemplate();
+    }
+
+    const onTemplateCreated = (templateId: string) => {
+        postForm(
+            ["name", itemBasicData?.name],
+            ["description", itemBasicData?.description ?? ""],
+            ["image", itemBasicData?.image],
+            ["categoryId", itemBasicData?.categoryId],
+            ["templateId", templateId]
+        );
+    }
+
+    useEffect(() => {
+        if (formData) {
+            onItemCreated();
+        }
+    }, [formData]);
 
     useEffect(() => {
         setError(formError);
     }, [formError]);
 
     useEffect(() => {
-        setError(templateError);
-    }, [templateError]);
-
-    const addField = () => {
-        let fieldType = valueTypeDropdownRef.current?.getValueType() ?? null;
-        if (fieldType !== null) {
-            fieldFactoryRef.current?.addField(fieldType);
-            setFields(fields.concat([null]));
-        }
-    }
-
-    const updateField = (field: Field, index: number) => {
-        setFields(f => {
-            let updatedFields = [...f];
-            updatedFields[index] = field;
-            return updatedFields;
-        });
-    }
+        setFields([]);
+    }, []);
 
     //TODO toggle switch for batch mode: preserve template and clear fields
+
+    const updateItemBasicData = (imageBasicData: ItemBasicData) => {
+        setItemBasicData(imageBasicData);
+        if(imageBasicData.image) {
+            setImagePreviewUrl(URL.createObjectURL(imageBasicData.image))
+        } else {
+            setImagePreviewUrl(null);
+        }
+    };
 
     return (
         <DialogBase ref={innerRef} fullWidth maxWidth={"xl"} onClose={onClose}>
             <DialogTitle>Create Item</DialogTitle>
             <DialogContent>
                 <Grid container direction={"row"} spacing={2} justifyContent={"space-around"}>
-                    <Grid item xs={3}>
-                        <TextField
-                            autoFocus
-                            margin="dense"
-                            id="name"
-                            label="Item Name"
-                            type="text"
-                            fullWidth
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setItemName(e.target.value)}
-                        />
-                        <TextField
-                            margin="dense"
-                            id="name"
-                            label="Description"
-                            type="text"
-                            fullWidth
-                            multiline
-                            rows={4}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value)}
-                        />
-                        <FormControl fullWidth sx={{marginTop: 1, marginBottom: 1}}>
-                            <InputLabel id="category-id-select-label">Category</InputLabel>
-                            <CategoryDropDown setError={setError} setCategoryId={setCategoryId}/>
-                        </FormControl>
-                        <FileUploadButton
-                            onFileChanged={setFile}
-                            accept={"image/*"}
-                            id={"image-upload"}
-                            label={"Upload image"}
-                        />
-                    </Grid>
-                    <Grid item xs={5}>
-                        <FormControlLabel
-                            label="Existing template"
-                            control={
-                                <Checkbox
-                                    value={existingTemplate}
-                                    onChange={
-                                        (e: React.ChangeEvent<HTMLInputElement>) =>
-                                            setExistingTemplate(e.target.checked)
-                                    }
-                                />
-                            }
-                        />
-                        {!existingTemplate && <Stack>
-                            <TextField
-                                autoFocus
-                                margin="dense"
-                                id="template-name"
-                                label="Template name"
-                                type="text"
-                                fullWidth
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTemplateName(e.target.value)}
-                            />
-                            <Stack direction={"row"}>
-                                <ValueTypeDropdown
-                                    label={"Type to add"}
-                                    sx={{display: "inline"}}
-                                    ref={valueTypeDropdownRef}
-                                />
-                                <Button variant={"contained"}
-                                        sx={{marginLeft: 1, marginTop: 1, marginBottom: 1}}
-                                        onClick={addField}
-                                >Add</Button>
-                            </Stack>
-                            <InputFieldFactory
-                                onFieldsChange={updateField}
-                                ref={fieldFactoryRef}
-                            />
-                            <Button onClick={() => {
-                                console.log(fieldFactoryRef.current?.getFields())
-                            }}>TEST</Button>
-                        </Stack>}
-                        {existingTemplate &&
-                            <Stack>
-                                <FormControl fullWidth sx={{marginTop: 1, marginBottom: 1}}>
-                                    <InputLabel id="template-id-select-label">Template</InputLabel>
-                                    <TemplateDropDown setTemplateId={setTemplateId} setError={setError}/>
-                                    <InputFieldFactory
-                                        templateId={templateId === "" ? null : templateId}
-                                        onFieldsChange={updateField}
-                                        ref={fieldFactoryRef}
-                                    />
-                                </FormControl>
-                            </Stack>
-                        }
-                    </Grid>
+                    <ItemBasicDataForm
+                        setError={setError}
+                        setItemBasicData={updateItemBasicData}
+                        ref={itemBasicDataFormRef}/>
+                    <ItemInputFieldsForm
+                        setError={setError}
+                        onFieldsChange={setFields}
+                        onTemplateCreated={onTemplateCreated}
+                        ref={itemInputFieldsFormRef}/>
                     <Grid item xs={2}>
                         <Box sx={{width: "100%"}}>
-                            <ItemCard
-                                onDelete={() => {
-                                }}
-                                name={itemName ?? "Example"}
-                                description={description ?? "Description"}
-                                imageId={""}
-                                historyId={""}
+                            <PreviewItemCard
+                                name={itemBasicData?.name ?? null}
+                                description={itemBasicData?.description ?? null}
                                 fields={fields}
+                                imageUrl={imagePreviewUrl}
                             />
                         </Box>
                     </Grid>
@@ -242,15 +118,12 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
 
             <DialogActions>
                 <Box sx={{marginLeft: 2, marginRight: "auto"}}>
-
-                    <SuccessMessage enabled={formData != null}>Item: "{itemName}" created</SuccessMessage>
-
+                    <SuccessMessage enabled={formData != null}>Item: "{itemBasicData?.name}" created</SuccessMessage>
                     <ErrorMessage enabled={error != null}>
-                        Could not create item {itemName} <br/>Reason: {error}
+                        {error?.toString()}
                     </ErrorMessage>
-
                 </Box>
-                <Button onClick={onSubmit}>Create</Button>
+                <Button onClick={createItem}>Create</Button>
             </DialogActions>
 
         </DialogBase>)
