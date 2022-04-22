@@ -15,10 +15,20 @@ public class ItemService {
     private final ItemRepository itemRepository;
 
     private final CategoryService categoryService;
+    private final ImageService imageService;
+    private final ItemHistoryService itemHistoryService;
+    private final TemplateService templateService;
 
-    public ItemService(ItemRepository itemRepository, CategoryService categoryService) {
+    public ItemService(ItemRepository itemRepository,
+                       CategoryService categoryService,
+                       ImageService imageService,
+                       ItemHistoryService itemHistoryService,
+                       TemplateService templateService) {
         this.itemRepository = itemRepository;
         this.categoryService = categoryService;
+        this.imageService = imageService;
+        this.itemHistoryService = itemHistoryService;
+        this.templateService = templateService;
     }
 
     public Item insert(Item item) throws NotFoundException {
@@ -34,8 +44,12 @@ public class ItemService {
     }
 
     public void deleteById(String id) {
-        // TODO dont forget to delete in cascade
-        itemRepository.deleteById(id);
+        itemRepository.findById(id).ifPresent(item -> {
+            imageService.deleteById(item.getImageId());
+            itemHistoryService.deleteById(item.getHistoryId());
+            templateService.deleteById(item.getTemplateId());
+            itemRepository.deleteById(id);
+        });
     }
 
     public List<Item> getAll() {

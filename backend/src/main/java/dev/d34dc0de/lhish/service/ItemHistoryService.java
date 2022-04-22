@@ -49,7 +49,7 @@ public class ItemHistoryService {
         return update(itemHistory);
     }
 
-    public void delete(String id) {
+    public void deleteById(String id) {
         itemHistoryRepository.deleteById(id);
     }
 }

@@ -23,7 +23,7 @@ public class ImageService {
         return imageRepository.findById(id);
     }
 
-    public void delete(String id) {
+    public void deleteById(String id) {
         imageRepository.deleteById(id);
     }
 }
