@@ -10,7 +10,7 @@ export interface ErrorMessageProps {
 export const ErrorMessage: FunctionComponent<ErrorMessageProps> = ({children, enabled, sx = undefined}) => {
     return (
         <>
-            {enabled && <Typography sx={sx} color={red[500]}>{children}</Typography>}
+            {enabled && <Typography sx={sx} color={red[500]}><>{children}</></Typography>}
         </>
     );
 };
