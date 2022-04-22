@@ -12,9 +12,11 @@ import java.util.Optional;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final ImageService imageService;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, ImageService imageService) {
         this.categoryRepository = categoryRepository;
+        this.imageService = imageService;
     }
 
     public Category insert(Category category) {
@@ -44,7 +46,9 @@ public class CategoryService {
     }
 
     public void deleteById(String id) {
-        //TODO don't forget to delete by cascade
-        categoryRepository.deleteById(id);
+        categoryRepository.findById(id).ifPresent(category -> {
+            imageService.deleteById(id);
+            categoryRepository.deleteById(id);
+        });
     }
 }

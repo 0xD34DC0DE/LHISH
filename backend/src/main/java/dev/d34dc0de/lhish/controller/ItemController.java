@@ -57,14 +57,16 @@ public class ItemController extends BaseController {
         }
         ItemHistory itemHistory = createItemHistory(principal);
 
-        Template template = templateService.insert(Template.builder().valueFieldsIds(List.of()).build());
+        if(templateService.findById(itemCreationForm.templateId()).isEmpty()) {
+            return APIError("Template not found");
+        }
 
         itemService.insert(
                 ItemModelFactory.toItem(itemCreationForm,
                         principal.getId(),
                         image.getId(),
                         itemHistory.getId(),
-                        template.getId())
+                        itemCreationForm.templateId())
         );
         return APIOk("Item created successfully");
     }

@@ -94,7 +94,7 @@ const callOnStatus = (setError: Dispatch<SetStateAction<string | null>>,
 }
 
 //TODO use object instead of arguments
-export const usePost = <R>(url: string,
+export const usePost = <R = APIError>(url: string,
                            headers: [string, ValueType | Function][] = [],
                            onStatus: [number | number[], ((setError: Dispatch<SetStateAction<string | null>>) => void)][] = []):
     [
@@ -116,7 +116,7 @@ export const usePost = <R>(url: string,
             {...callGetters(body)},
             {
                 headers: callGetters(headers),
-                validateStatus: status => status > 500
+                validateStatus: status => status < 500
             })
             .then(value => {
                 if (value.data.error) {

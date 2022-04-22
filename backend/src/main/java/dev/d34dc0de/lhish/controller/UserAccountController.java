@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController()
@@ -45,6 +46,12 @@ public class UserAccountController {
     private ResponseEntity<Boolean> getuserExists(@PathVariable("username") String username) {
         return ResponseEntity.ok(userAccountService.findByUsername(username).isPresent());
     }
+
+    @GetMapping("/usernames")
+    private ResponseEntity<List<String>> getAllUsernames() {
+        return ResponseEntity.ok(userAccountService.getAllUsernames());
+    }
+
 
     @GetMapping("/profile")
     private ResponseEntity<UserAccountView> getUserAccountView(@AuthenticationPrincipal Account principal) {

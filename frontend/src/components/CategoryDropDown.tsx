@@ -1,10 +1,12 @@
-import React, {forwardRef, useEffect, useImperativeHandle, useState} from "react";
+import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from "react";
 import {MenuItem, Select, SelectChangeEvent} from "@mui/material";
 import {useAuthGet} from "../hooks/QueryHooks";
 import {CategoryIdNamePairListView} from "../views/CategoryIdNamePairListView";
+import {SelectValidationWrapper, SelectValidationWrapperRef} from "./SelectValidationWrapper";
 
 export interface CategoryDropDownRef {
     reset: () => void;
+    validate: () => boolean;
 }
 
 export interface CategoryDropDownProps {
@@ -15,6 +17,7 @@ export interface CategoryDropDownProps {
 export const CategoryDropDown = forwardRef<CategoryDropDownRef, CategoryDropDownProps>(
     ({setCategoryId, setError}: CategoryDropDownProps, ref) => {
         const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+        const categorySelectRef = useRef<SelectValidationWrapperRef>(null);
 
         const [getCategoryIdNamePairs, categoryIdNamePairs, categoryIdNamePairsError, categoryIdNamePairsReset] =
             useAuthGet<CategoryIdNamePairListView>(
@@ -26,6 +29,13 @@ export const CategoryDropDown = forwardRef<CategoryDropDownRef, CategoryDropDown
                 setSelectedCategoryId("");
                 categoryIdNamePairsReset();
                 getCategoryIdNamePairs();
+            },
+            validate: () => {
+                if(!categorySelectRef.current?.validate()){
+                    setError("Category is required");
+                    return false;
+                }
+                return true;
             }
         }));
 
@@ -38,7 +48,7 @@ export const CategoryDropDown = forwardRef<CategoryDropDownRef, CategoryDropDown
         }, [categoryIdNamePairsError]);
 
         useEffect(() => {
-            if(selectedCategoryId !== "") {
+            if (selectedCategoryId !== "") {
                 setCategoryId(selectedCategoryId);
             } else {
                 setCategoryId(null);
@@ -53,23 +63,27 @@ export const CategoryDropDown = forwardRef<CategoryDropDownRef, CategoryDropDown
             return categoryIdNamePairs ? categoryIdNamePairs.categoryNames : [];
         };
 
-        function getIdNamePairs() {
+        const getIdNamePairs = () => {
             const names = getNames();
             return getIds().map((k, i) =>
                 [k, names[i]] // zip id and category name
             );
-        }
+        };
 
-        return <Select
-            labelId="category-id-select-label"
-            id="category-id-select"
-            value={selectedCategoryId}
-            label="Category"
-            defaultValue=""
-            onChange={(e: SelectChangeEvent) => setSelectedCategoryId(e.target.value)}
+        return <SelectValidationWrapper
+            validator={() => selectedCategoryId === "" ? "Category is required" : null}
+            setValue={setSelectedCategoryId}
+            label={"Category"}
+            ref={categorySelectRef}
+            sx={{marginTop: 1, marginBottom: 1}}
+            setError={setError}
         >
-            {getIdNamePairs().map(pair => (
-                <MenuItem key={pair[0]} value={pair[0]}>{pair[1]}</MenuItem>
-            ))}
-        </Select>;
+            <Select
+                defaultValue=""
+            >
+                {getIdNamePairs().map(pair => (
+                    <MenuItem key={pair[0]} value={pair[0]}>{pair[1]}</MenuItem>
+                ))}
+            </Select>
+        </SelectValidationWrapper>
     })

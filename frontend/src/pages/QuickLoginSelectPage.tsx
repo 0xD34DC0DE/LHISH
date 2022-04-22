@@ -1,12 +1,24 @@
 import {Avatar, Grid, Link, Typography} from "@mui/material";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Link as RouterLink } from 'react-router-dom';
+import {useAuthGet, useGet} from "../hooks/QueryHooks";
+import {ErrorMessage} from "../components/ErrorMessage";
 
 interface QuickLoginSelectPageProps {
     setUsername: (userId: string) => void
 }
 
 const QuickLoginSelectPage = ({setUsername}: QuickLoginSelectPageProps) => {
+    const [error, setError] = useState<string | null>(null);
+    const [getUsernames, usernames, usernamesError, usernamesReset] = useGet<string[]>("http://localhost:8080/user/usernames");
+
+    useEffect(() => {
+        getUsernames()
+    }, []);
+
+    useEffect(() => {
+        setError(usernamesError);
+    }, [usernamesError]);
 
     return (
         <>
@@ -20,21 +32,13 @@ const QuickLoginSelectPage = ({setUsername}: QuickLoginSelectPageProps) => {
                   spacing={2}
                   sx={{marginTop: 4}}>
 
-                <Grid item>
-                    <Link component={RouterLink} to={"/authentication"} underline="none" color="inherit" onClick={() => setUsername("test")}>
-                        <Avatar sx={{width: 80, height: 80}}>A</Avatar>
-                    </Link>
-                </Grid>
-                <Grid item>
-                    <Link component={RouterLink} to={"/authentication"} underline="none" color="inherit">
-                        <Avatar sx={{width: 80, height: 80}}>B</Avatar>
-                    </Link>
-                </Grid>
-                <Grid item>
-                    <Link component={RouterLink} to={"/authentication"} underline="none" color="inherit">
-                        <Avatar sx={{width: 80, height: 80}}>C</Avatar>
-                    </Link>
-                </Grid>
+                {(usernames ?? []).map((username: string, i: number) => (
+                    <Grid item key={i}>
+                        <Link component={RouterLink} to={"/authentication"} underline="none" color="inherit" onClick={() => setUsername(username)}>
+                            <Avatar sx={{width: 80, height: 80}}>{username}</Avatar>
+                        </Link>
+                    </Grid>
+                ))}
             </Grid>
             <Grid item textAlign={"center"} sx={{marginTop: 6}}>
                 <Link component={RouterLink} to={"/login"}>My account is no listed</Link>

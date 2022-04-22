@@ -10,11 +10,9 @@ public record ItemView(
         String description,
         String imageId,
         String historyId,
-        List<ValueFieldView> valueFields
+        List<ValueFieldView> fields
 ) {
     @Builder
     public ItemView {
     }
-
-    ;
 }

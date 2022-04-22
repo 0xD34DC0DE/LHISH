@@ -10,13 +10,17 @@ import java.util.List;
 public class Template {
     @Id
     private String id;
+    private String name;
     private boolean isCategoryTemplate;
-    List<String> valueFieldsIds;
+    private Boolean isInstance;
+    List<ValueField> valueFields;
 
     @Builder
-    public Template(String id, List<String> valueFieldsIds) {
+    public Template(String id, String name, Boolean isInstance, List<ValueField> valueFields) {
         this.id = id;
+        this.name = name;
         this.isCategoryTemplate = false; // Not implemented yet
-        this.valueFieldsIds = valueFieldsIds;
+        this.isInstance = isInstance;
+        this.valueFields = valueFields;
     }
 }

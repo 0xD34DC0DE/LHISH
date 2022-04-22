@@ -7,18 +7,42 @@ import IItem, {Availability} from "../views/ItemView";
 import {DialogBaseRef} from "./DialogBase";
 import {ItemHistoryDialog} from "./ItemHistoryDialog";
 import {useDeleteEntity} from "../hooks/CardDeleteHook";
+import {Field} from "../card_field_components/Fields";
+import {ValueFieldFactory} from "../card_field_components/card_field/base/ValueFieldFactory";
 
 interface ItemCardProps extends IItem {
     onDelete: () => void;
+    fields?: (Field | null)[];
 }
 
-export const ItemCard = ({id, name, description, imageId, availability, historyId, onDelete}: ItemCardProps) => {
+export const ItemCard = ({
+                             id = null,
+                             name,
+                             description,
+                             imageId = null,
+                             availability = null,
+                             historyId = null,
+                             onDelete,
+                             fields = [],
+                         }: ItemCardProps) => {
     const historyDialogRef = useRef<DialogBaseRef>(null);
     const [getDialogs, openDeleteDialog] = useDeleteEntity(
-        "category",
+        "item",
         () => `http://localhost:8080/item/${id}`,
         onDelete
     );
+
+    const deleteButtonClicked = () => {
+        if (id) {
+            openDeleteDialog();
+        }
+    };
+
+    const onHistoryButtonClicked = () => {
+        if (historyId) {
+            historyDialogRef.current?.openDialog();
+        }
+    };
 
     return (
         <>
@@ -26,31 +50,31 @@ export const ItemCard = ({id, name, description, imageId, availability, historyI
                 <CardMedia
                     component="img"
                     height="140"
-                    image={imageId == "" ? "" : `http://localhost:8080/image/${imageId}`}
+                    image={imageId ? `http://localhost:8080/image/${imageId}` : ""}
                 />
                 <CardContent>
                     <Typography variant="h5">{name}</Typography>
-                    {/*<Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>*/}
                     {/*TODO Make availability component to render icon*/}
-                    <Typography sx={{fontSize: 14}}>{Availability[availability]}</Typography>
+                    {availability && <Typography sx={{fontSize: 14}}>{Availability[availability]}</Typography>}
                     <Typography sx={{fontSize: 14}} color="text.secondary"
                                 gutterBottom>{description}</Typography>
+                    <ValueFieldFactory fields={fields}/>
                 </CardContent>
                 <CardActions disableSpacing>
                     <IconButton aria-label="View user history"
-                                onClick={() => historyDialogRef.current?.openDialog()}>
+                                onClick={onHistoryButtonClicked}>
                         <UserHistory/>
                     </IconButton>
                     <IconButton aria-label="Localize">
                         <NotListedLocationIcon/>
                     </IconButton>
                     <IconButton aria-label="Localize" sx={{marginLeft: "auto"}}
-                                onClick={openDeleteDialog}>
+                                onClick={deleteButtonClicked}>
                         <ClearIcon/>
                     </IconButton>
                 </CardActions>
             </Card>
-            <ItemHistoryDialog innerRef={historyDialogRef} itemHistoryId={historyId}/>
+            <ItemHistoryDialog innerRef={historyDialogRef} itemHistoryId={historyId ?? ""}/>
             {getDialogs()}
         </>
     );

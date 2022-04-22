@@ -1,7 +1,7 @@
 import {SxProps, Theme} from "@mui/material";
 import React, {forwardRef, useImperativeHandle} from "react";
-import {useSelect} from "../hooks/SelectHook";
-import {ValueType} from "../views/ValueTypes";
+import {useSelect} from "../../../hooks/SelectHook";
+import {ValueType} from "../../ValueTypes";
 
 export interface ValueTypeDropdownRef {
     getValueType(): ValueType | null;
@@ -21,11 +21,11 @@ export const ValueTypeDropdown = forwardRef<ValueTypeDropdownRef, ValueTypeDropd
         }));
 
         const mapping: {[key: string]: ValueType} = {
-            "string": ValueType.String,
-            "integer": ValueType.Integer,
-            "integer_symbol": ValueType.IntegerSymbol,
-            "float": ValueType.Float,
-            "float_symbol": ValueType.FloatSymbol,
+            "string": ValueType.STRING,
+            "integer": ValueType.INTEGER,
+            "integer_symbol": ValueType.INTEGER_SYMBOL,
+            "float": ValueType.FLOAT,
+            "float_symbol": ValueType.FLOAT_SYMBOL,
         }
 
         const options: [string, string][] = [
