@@ -11,6 +11,13 @@ import java.util.List;
 public abstract class ItemHistoryModelFactory {
 
     public static ItemHistory toItemHistory(String accountId) {
+        List<ItemHistoryEntry> itemHistoryEntries = getItemCreationHistory(accountId);
+        return ItemHistory.builder()
+               .entries(itemHistoryEntries)
+               .build();
+    }
+
+    private static List<ItemHistoryEntry> getItemCreationHistory(String accountId) {
         List<ItemHistoryEntry> itemHistoryEntries = new ArrayList<>();
         itemHistoryEntries.add(
                 ItemHistoryEntry.builder()
@@ -19,9 +26,7 @@ public abstract class ItemHistoryModelFactory {
                         .timestamp(LocalDateTime.now())
                         .build()
         );
-       return ItemHistory.builder()
-               .entries(itemHistoryEntries)
-               .build();
+        return itemHistoryEntries;
     }
 
     public static ItemHistoryEntry toItemHistoryEntry(ItemHistoryActionForm itemHistoryActionForm, String userId) {
