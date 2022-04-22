@@ -2,11 +2,11 @@ import React from "react";
 import Masonry from "@mui/lab/Masonry";
 import {Container} from "@mui/material";
 
-interface CardMasonryParams {
+interface CardMasonryProps {
     cards: React.ReactElement[]
 }
 
-export const CardMasonry = ({cards}: CardMasonryParams) => {
+export const CardMasonry = ({cards}: CardMasonryProps) => {
     return (
         <Container>
             <Masonry>
