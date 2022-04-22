@@ -15,7 +15,12 @@ export const FloatFieldInput = forwardRef<FormFieldRef, FloatFieldInputProps>(
         const [name, setName] = useInput();
         const [value, setValue, overrideValue] = useInput();
 
-        const [nameValidation, nameErrorProps] = useValidation(() => name === "" ? "Name is required" : null);
+        const [nameValidation, nameErrorProps] = useValidation(() => {
+            if(existingName) {
+                return null;
+            }
+            return name === "" ? "Name is required" : null
+        });
         const [valueValidation, valueErrorProps] = useValidation(
             () => isNaN(parseFloat(value)) ? "Value is required" : null
         );
@@ -37,7 +42,7 @@ export const FloatFieldInput = forwardRef<FormFieldRef, FloatFieldInputProps>(
             }
             return {
                 type: ValueType.FLOAT,
-                name: name,
+                name: existingName ?? name,
                 value: parseFloat(value),
             };
         }
@@ -52,7 +57,7 @@ export const FloatFieldInput = forwardRef<FormFieldRef, FloatFieldInputProps>(
             }
             let field = getField();
             if (field !== null) {
-                onFieldChange(field);
+                onFieldChange();
             }
         }, [name, value]);
 

@@ -8,21 +8,30 @@ import {useValidation} from "../../hooks/ValidationHook";
 import {Field} from "../Fields";
 
 export interface IntegerSymbolFieldInputProps extends ValueFieldInput {
-    existingSymbol?: string | null;
 }
 
 export const IntegerSymbolFieldInput = forwardRef<FormFieldRef, IntegerSymbolFieldInputProps>(
-    ({existingName, existingSymbol = null, onFieldChange}: IntegerSymbolFieldInputProps, ref) => {
+    ({existingName, existingValue = null, onFieldChange}: IntegerSymbolFieldInputProps, ref) => {
         const [name, setName] = useInput();
         const [value, setValue] = useInput(v => v.replaceAll(".", ""));
         const [symbol, setSymbol] = useInput();
 
-        const [nameValidation, nameErrorProps] = useValidation(() => name === "" ? "Name is required" : null);
+        const [nameValidation, nameErrorProps] = useValidation(() => {
+            if(existingName) {
+                return null;
+            }
+            return name === "" ? "Name is required" : null
+        });
         const [valueValidation, valueErrorProps] = useValidation(
             () => isNaN(parseInt(value)) ? "Value is required" : null
         );
         const [symbolValidation, symbolErrorProps] = useValidation(
-            () => symbol === "" ? "Symbol is required" : null
+            () => {
+                if(existingValue !== null && existingValue["symbol"]) {
+                    return null;
+                }
+                return name === "" ? "Symbol is required" : null
+            }
         );
 
         useImperativeHandle(ref, () => ({
@@ -43,9 +52,9 @@ export const IntegerSymbolFieldInput = forwardRef<FormFieldRef, IntegerSymbolFie
             }
             return {
                 type: ValueType.INTEGER_SYMBOL,
-                name: name,
+                name: existingName ?? name,
                 value: parseInt(value),
-                symbol: symbol
+                symbol: existingValue?.["symbol"] ?? symbol
             };
         }
 
@@ -59,13 +68,14 @@ export const IntegerSymbolFieldInput = forwardRef<FormFieldRef, IntegerSymbolFie
             }
             let field = getField();
             if (field !== null) {
-                onFieldChange(field);
+                onFieldChange();
             }
         }, [name, value, symbol]);
 
 
         const getEndAdornment = () => {
-            return existingSymbol ? <InputAdornment position="start">{existingSymbol}</InputAdornment> : null;
+            return existingValue?.["symbol"] ?
+                <InputAdornment position="start">{existingValue["symbol"]}</InputAdornment> : null;
         }
 
         return (
@@ -96,7 +106,7 @@ export const IntegerSymbolFieldInput = forwardRef<FormFieldRef, IntegerSymbolFie
                     {...valueErrorProps}
                     sx={{marginLeft: 1, marginRight: 1}}
                 />
-                {!existingSymbol && <TextField
+                {!existingValue && <TextField
                     margin="dense"
                     id="symbol"
                     label="Symbol"

@@ -8,21 +8,30 @@ import {InputAdornment, Stack, TextField} from "@mui/material";
 import {Field} from "../Fields";
 
 export interface FloatSymbolFieldInputProps extends ValueFieldInput {
-    existingSymbol?: string | null;
 }
 
 export const FloatSymbolFieldInput = forwardRef<FormFieldRef, FloatSymbolFieldInputProps>(
-    ({existingName, existingSymbol = null, onFieldChange}: FloatSymbolFieldInputProps, ref) => {
+    ({existingName, existingValue = null, onFieldChange}: FloatSymbolFieldInputProps, ref) => {
         const [name, setName] = useInput();
         const [value, setValue, overrideValue] = useInput();
         const [symbol, setSymbol] = useInput();
 
-        const [nameValidation, nameErrorProps] = useValidation(() => name === "" ? "Name is required" : null);
+        const [nameValidation, nameErrorProps] = useValidation(() => {
+            if (existingName) {
+                return null;
+            }
+            return name === "" ? "Name is required" : null
+        });
         const [valueValidation, valueErrorProps] = useValidation(
             () => isNaN(parseFloat(value)) ? "Value is required" : null
         );
         const [symbolValidation, symbolErrorProps] = useValidation(
-            () => symbol === "" ? "Symbol is required" : null
+            () => {
+                if (existingValue !== null && existingValue["symbol"]) {
+                    return null;
+                }
+                return name === "" ? "Symbol is required" : null
+            }
         );
 
         useImperativeHandle(ref, () => ({
@@ -43,9 +52,9 @@ export const FloatSymbolFieldInput = forwardRef<FormFieldRef, FloatSymbolFieldIn
             }
             return {
                 type: ValueType.FLOAT_SYMBOL,
-                name: name,
+                name: existingName ?? name,
                 value: parseFloat(value),
-                symbol: symbol
+                symbol: existingValue?.["symbol"] ?? symbol
             };
         }
 
@@ -54,17 +63,18 @@ export const FloatSymbolFieldInput = forwardRef<FormFieldRef, FloatSymbolFieldIn
         }));
 
         useEffect(() => {
-            if(!isValid(true)) {
+            if (!isValid(true)) {
                 return;
             }
             let field = getField();
             if (field !== null) {
-                onFieldChange(field);
+                onFieldChange();
             }
         }, [name, value, symbol]);
 
         const getEndAdornment = () => {
-            return existingSymbol ? <InputAdornment position="start">{existingSymbol}</InputAdornment> : null;
+            return existingValue?.["symbol"] ?
+                <InputAdornment position="start">{existingValue["symbol"]}</InputAdornment> : null;
         }
 
         const formatValue = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -102,7 +112,7 @@ export const FloatSymbolFieldInput = forwardRef<FormFieldRef, FloatSymbolFieldIn
                     {...valueErrorProps}
                     sx={{marginLeft: 1, marginRight: 1}}
                 />
-                {!existingSymbol && <TextField
+                {!existingValue && <TextField
                     margin="dense"
                     id="symbol"
                     label="Symbol"

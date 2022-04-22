@@ -14,7 +14,13 @@ export const TextFieldInput = forwardRef<FormFieldRef, TextFieldInputProps>(
     ({existingName, onFieldChange}: TextFieldInputProps, ref) => {
         const [name, setName] = useInput();
         const [value, setValue] = useInput();
-        const [nameValidation, nameErrorProps] = useValidation(() => name === "" ? "Name is required" : null);
+
+        const [nameValidation, nameErrorProps] = useValidation(() => {
+            if(existingName) {
+                return null;
+            }
+            return name === "" ? "Name is required" : null
+        });
         const [valueValidation, valueErrorProps] = useValidation(
             () => value === "" ? "Value is required" : null
         );
@@ -32,7 +38,7 @@ export const TextFieldInput = forwardRef<FormFieldRef, TextFieldInputProps>(
             }
             return {
                 type: ValueType.STRING,
-                name: name,
+                name: existingName ?? name,
                 value: value,
             };
         }
@@ -42,12 +48,12 @@ export const TextFieldInput = forwardRef<FormFieldRef, TextFieldInputProps>(
         }));
 
         useEffect(() => {
-            if(!isValid(true)){
+            if (!isValid(true)) {
                 return;
             }
             let field = getField();
             if (field !== null) {
-                onFieldChange(field);
+                onFieldChange();
             }
         }, [name, value]);
 
@@ -62,7 +68,13 @@ export const TextFieldInput = forwardRef<FormFieldRef, TextFieldInputProps>(
                     fullWidth
                     onChange={setName}
                     {...nameErrorProps}
-                    sx={{marginRight: 1}}
+                    sx={{marginRight: 1,color: "black"}}
+                    inputProps={
+                        {
+                            readOnly: existingName !== null,
+                            disabled: existingName !== null,
+                        }
+                    }
                 />
                 <TextField
                     margin="dense"

@@ -15,7 +15,12 @@ export const IntegerFieldInput = forwardRef<FormFieldRef, NumberFieldInputProps>
         const [name, setName] = useInput();
         const [value, setValue] = useInput(v => v.replaceAll(".", ""));
 
-        const [nameValidation, nameErrorProps] = useValidation(() => name === "" ? "Name is required" : null);
+        const [nameValidation, nameErrorProps] = useValidation(() => {
+            if(existingName) {
+                return null;
+            }
+            return name === "" ? "Name is required" : null
+        });
         const [valueValidation, valueErrorProps] = useValidation(
             () => isNaN(parseInt(value)) ? "Value is required" : null
         );
@@ -52,7 +57,7 @@ export const IntegerFieldInput = forwardRef<FormFieldRef, NumberFieldInputProps>
             }
             let field = getField();
             if (field !== null) {
-                onFieldChange(field);
+                onFieldChange();
             }
         }, [name, value]);
 
