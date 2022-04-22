@@ -12,7 +12,6 @@ import {ValueFieldFactory} from "../card_field_components/card_field/base/ValueF
 
 interface ItemCardProps extends IItem {
     onDelete: () => void;
-    imageUrl?: string | null;
     fields?: (Field | null)[];
 }
 
@@ -24,12 +23,11 @@ export const ItemCard = ({
                              availability = null,
                              historyId = null,
                              onDelete,
-                             imageUrl = null,
-                             fields = []
+                             fields = [],
                          }: ItemCardProps) => {
     const historyDialogRef = useRef<DialogBaseRef>(null);
     const [getDialogs, openDeleteDialog] = useDeleteEntity(
-        "category",
+        "item",
         () => `http://localhost:8080/item/${id}`,
         onDelete
     );
@@ -46,27 +44,16 @@ export const ItemCard = ({
         }
     };
 
-    const getImageUrl = () => {
-        if (imageUrl) {
-            return imageUrl;
-        }
-        if (imageId === "") {
-            return "";
-        }
-        return `http://localhost:8080/image/${imageId}`;
-    }
-
     return (
         <>
             <Card variant="outlined" sx={{borderRadius: 2, borderWidth: 2, borderColor: "#a1a1a1"}}>
                 <CardMedia
                     component="img"
                     height="140"
-                    image={getImageUrl()}
+                    image={imageId ? `http://localhost:8080/image/${imageId}` : ""}
                 />
                 <CardContent>
                     <Typography variant="h5">{name}</Typography>
-                    {/*<Typography sx={{fontSize: 14}} color="text.secondary" gutterBottom>*/}
                     {/*TODO Make availability component to render icon*/}
                     {availability && <Typography sx={{fontSize: 14}}>{Availability[availability]}</Typography>}
                     <Typography sx={{fontSize: 14}} color="text.secondary"
