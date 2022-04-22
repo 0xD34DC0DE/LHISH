@@ -3,7 +3,7 @@ import {PageHeader} from "../components/PageHeader";
 import {CardMasonry} from "../components/CardMasonry";
 import {DialogBaseRef} from "../components/DialogBase";
 import {useAuthGet} from "../hooks/QueryHooks";
-import IItem from "../views/ItemView";
+import IItem, {ItemDTO} from "../views/ItemView";
 import {ItemCard} from "../components/ItemCard";
 import {CreateItemDialog} from "../components/CreateItemDialog";
 import {useLocation, useParams} from "react-router-dom";
@@ -24,7 +24,7 @@ const ItemsPage = () => {
             return "http://localhost:8080/item/all";
     }
 
-    const [getItems, items, itemsError, itemsReset] = useAuthGet<IItem[]>(getItemsUrl());
+    const [getItems, items, itemsError, itemsReset] = useAuthGet<ItemDTO[]>(getItemsUrl());
     const [getCategory, category, categoryError, categoryReset] =
         useAuthGet<ICategory>(`http://localhost:8080/category/${params.categoryId}`);
 
@@ -47,8 +47,18 @@ const ItemsPage = () => {
         reset();
     }
 
-    const mapItems = (items: IItem[]) => {
-        return items.map(item => {
+    const mapItems = (items: ItemDTO[]) => {
+        console.log("network", items);
+        const mappedItems = items.map((item: ItemDTO) => {
+            const {fields, ...rest} = item;
+            const mappedFields = fields.map(f => ({...f.value, name: f.name, type: f.type}));
+            return {
+                ...rest,
+                fields: mappedFields
+            } as IItem;
+        });
+        console.log(mappedItems);
+        return mappedItems.map(item => {
             return <ItemCard {...item} onDelete={onItemDelete} key={item.id}/>
         });
     }
@@ -57,12 +67,12 @@ const ItemsPage = () => {
         getItems();
     }
 
-    function getTitle() {
+    const getTitle = () => {
         if (isInCategory)
             return `Items of category: ${category?.name ?? ""}`;
         else
             return "All Items";
-    }
+    };
 
     return (
         <>
