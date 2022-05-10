@@ -1,6 +1,6 @@
 import DialogBase, {DialogBaseRef} from "./DialogBase"
 import {Box, Button, DialogActions, DialogContent, DialogTitle, TextField, Typography} from "@mui/material";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {FileUploadButton} from "./FileUploadButton";
 import {useAuthFormPost} from "../hooks/QueryHooks";
 import {green, red} from "@mui/material/colors";
@@ -27,6 +27,12 @@ export const CreateCategoryDialog = ({innerRef, onCategoryCreated}: CreateCatego
             ["image", file]
         );
     }
+
+    useEffect(() => {
+        if (data) {
+            onCategoryCreated();
+        }
+    }, [data]);
 
     return (
         <DialogBase ref={innerRef} fullWidth maxWidth={"sm"}>

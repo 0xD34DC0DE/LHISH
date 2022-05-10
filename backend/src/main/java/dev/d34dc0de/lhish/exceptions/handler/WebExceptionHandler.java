@@ -14,11 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class WebExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {APIException.class})
-    protected ResponseEntity<Object> handleConflict(RuntimeException ex, WebRequest request) {
-        return handleExceptionInternal(ex,
-                APIResponse.error(ex.getMessage()),
-                new HttpHeaders(),
-                HttpStatus.OK,
-                request);
+    protected ResponseEntity<APIResponse> handleConflict(RuntimeException ex, WebRequest request) {
+        return APIResponse.error(ex.getMessage());
     }
 }

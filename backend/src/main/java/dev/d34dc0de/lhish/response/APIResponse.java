@@ -2,6 +2,7 @@ package dev.d34dc0de.lhish.response;
 
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.http.ResponseEntity;
 
 @Data
 public class APIResponse {
@@ -14,11 +15,11 @@ public class APIResponse {
         this.success = success == null ? "" : success;
     }
     
-    public static APIResponse ok(String successMessage) {
-        return new APIResponse(null, successMessage);
+    public static ResponseEntity<APIResponse> ok(String successMessage) {
+        return ResponseEntity.ok(new APIResponse(null, successMessage));
     }
 
-    public static APIResponse error(String errorMessage) {
-        return new APIResponse(errorMessage, null);
+    public static ResponseEntity<APIResponse> error(String errorMessage) {
+        return ResponseEntity.ok(new APIResponse(errorMessage, null));
     }
 }

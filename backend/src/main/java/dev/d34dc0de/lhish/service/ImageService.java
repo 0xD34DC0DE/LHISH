@@ -4,26 +4,10 @@ import dev.d34dc0de.lhish.model.Image;
 import dev.d34dc0de.lhish.repository.ImageRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
-public class ImageService {
-
-    private final ImageRepository imageRepository;
+public class ImageService extends BaseService<Image, ImageRepository> {
 
     public ImageService(ImageRepository imageRepository) {
-        this.imageRepository = imageRepository;
-    }
-
-    public Image insert(Image image) {
-        return imageRepository.save(image);
-    }
-
-    public Optional<Image> findById(String id) {
-        return imageRepository.findById(id);
-    }
-
-    public void deleteById(String id) {
-        imageRepository.deleteById(id);
+        super(imageRepository);
     }
 }

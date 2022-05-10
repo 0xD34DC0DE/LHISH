@@ -137,6 +137,49 @@ export const usePost = <R = APIError>(url: string,
     return [post, data, error, reset];
 }
 
+export const usePut = <R = APIError>(url: string,
+                                      headers: [string, ValueType | Function][] = [],
+                                      onStatus: [number | number[], ((setError: Dispatch<SetStateAction<string | null>>) => void)][] = []):
+    [
+        (...body: [string, ValueType | Function][]) => void,
+            R | null,
+            string | null,
+        () => void
+    ] => {
+    const [data, setData] = useState<R | null>(null);
+    const [error, setError] = useState<string | null>(null);
+
+    const reset = () => {
+        setData(null);
+        setError(null)
+    }
+
+    const put = (...body: [string, ValueType | Function][]) => {
+        axios.put<R & APIError>(url,
+            {...callGetters(body)},
+            {
+                headers: callGetters(headers),
+                validateStatus: status => status < 500
+            })
+            .then(value => {
+                if (value.data.error) {
+                    setData(null);
+                    setError(value.data.error);
+                } else {
+                    setData(value.data);
+                    setError(null);
+                }
+            })
+            .catch(error => {
+                console.error(error.message);
+                setError(error.message);
+                setData(null);
+            });
+    };
+
+    return [put, data, error, reset];
+}
+
 export const useFormPost = <R = APIError>(url: string,
                                headers: [string, ValueType | Function][] = [],
                                onStatus: [number | number[], ((setError: Dispatch<SetStateAction<string | null>>) => void)][] = []):
@@ -199,6 +242,13 @@ export const useAuthFormPost = <R>(url: string,
         ],
         onStatus
     );
+}
+
+export const useAuthPut = <R>(url: string,
+                               headers: [string, ValueType | Function][] = [],
+                               onStatus: [number | number[], ((setError: Dispatch<SetStateAction<string | null>>) => void)][] = []) => {
+    const {session} = useContext(SessionContext);
+    return usePut<R>(url, [['Authorization', `Bearer ${session.token}`], ...headers], onStatus);
 }
 
 export const useDelete = (url: string | (() => string), headers: [string, ValueType | Function][] = []):

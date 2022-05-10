@@ -10,6 +10,7 @@ import {useLocation, useParams} from "react-router-dom";
 import {Typography} from "@mui/material";
 import {red} from "@mui/material/colors";
 import ICategory from "../views/CategoryView";
+import {PermissionNames} from "../views/PermissionNames";
 
 const ItemsPage = () => {
     const dialogRef = useRef<DialogBaseRef>(null);
@@ -48,7 +49,6 @@ const ItemsPage = () => {
     }
 
     const mapItems = (items: ItemDTO[]) => {
-        console.log("network", items);
         const mappedItems = items.map((item: ItemDTO) => {
             const {fields, ...rest} = item;
             const mappedFields = fields.map(f => ({...f.value, name: f.name, type: f.type}));
@@ -57,7 +57,6 @@ const ItemsPage = () => {
                 fields: mappedFields
             } as IItem;
         });
-        console.log(mappedItems);
         return mappedItems.map(item => {
             return <ItemCard {...item} onDelete={onItemDelete} key={item.id}/>
         });
@@ -76,11 +75,17 @@ const ItemsPage = () => {
 
     return (
         <>
-            <PageHeader title={getTitle()} onAddButtonClick={onAddButtonClick}/>
+            <PageHeader
+                title={getTitle()}
+                onAddButtonClick={onAddButtonClick}
+                buttonPermission={PermissionNames.UserCreateItem}/>
+
             {itemsError && <Typography color={red[500]}>{itemsError}</Typography>}
+
             {category && !items?.length && <Typography>No items in category: {category.name}</Typography>}
-            {/*TODO add column number change when going small (responsive)*/}
+
             <CardMasonry cards={mapItems(items ?? [])}/>
+
             <CreateItemDialog onItemCreated={onItemCreated} innerRef={dialogRef}/>
         </>
     );

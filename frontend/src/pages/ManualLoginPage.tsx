@@ -2,6 +2,8 @@ import {Avatar, Button, Grid, Link, TextField, Typography} from "@mui/material";
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {checkUsernameExists} from "../services/SessionService";
+import {PermissionGuard} from "../components/PermissionGuard";
+import {PermissionNames} from "../views/PermissionNames";
 
 interface ManualLoginPageProps {
     username: string,
@@ -56,9 +58,11 @@ export const ManualLoginPage = ({username, setUsername}: ManualLoginPageProps) =
                     <Button onClick={onSubmit} variant={"contained"}>Continue</Button>
             </Grid>
 
-            <Grid item textAlign={"center"} sx={{marginTop: 5}}>
-                <Link href={"/register"}>I don't have an account</Link>
-            </Grid>
+            <PermissionGuard permissionName={PermissionNames.UserCreateAccount}>
+                <Grid item textAlign={"center"} sx={{marginTop: 5}}>
+                    <Link href={"/register"}>I don't have an account</Link>
+                </Grid>
+            </PermissionGuard>
         </>
     );
 };

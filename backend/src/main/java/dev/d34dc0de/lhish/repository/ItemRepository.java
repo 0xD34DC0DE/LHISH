@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ItemRepository extends MongoRepository<Item, String> {
-    List<Item> findByCategoryId(String categoryId);
+public interface ItemRepository extends BaseRepository<Item> {
 }

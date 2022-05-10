@@ -1,45 +1,31 @@
 package dev.d34dc0de.lhish.controller;
 
-import dev.d34dc0de.lhish.exceptions.FailedToLoginException;
 import dev.d34dc0de.lhish.form.LoginForm;
-import dev.d34dc0de.lhish.model.JwtAccount;
-import dev.d34dc0de.lhish.security.JwtService;
 import dev.d34dc0de.lhish.security.LoginService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
-
-import java.util.HashMap;
 import java.util.Map;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 @RestController
-public class LoginController {
+@RequestMapping("/login")
+public class LoginController extends BaseController {
 
     private final LoginService loginService;
 
-    private final JwtService jwtService;
-
-    @Autowired
-    public LoginController(LoginService loginService, JwtService jwtService) {
+    public LoginController(LoginService loginService) {
         this.loginService = loginService;
-        this.jwtService = jwtService;
     }
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<Map<String, String>> login(@RequestBody LoginForm loginForm, HttpServletResponse response) {
+    @PostMapping()
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginForm loginForm) {
         return loginService.login(loginForm.username(), loginForm.password())
-                .map(jwtService::tokenFromAccount)
-                .map(token -> Map.of("token", token))
-                .map(map -> ResponseEntity.ok().body(map))
-                .orElse(ResponseEntity.ok().body(Map.of("error", "Invalid Credentials")));
+                .map(token -> JSON(KVPair.of("token", token)))
+                .orElse(JSON(KVPair.of("error", "Invalid Credentials")));
+    }
+
+    @GetMapping("/exists/{username}")
+    private ResponseEntity<Boolean> getUserExists(@PathVariable("username") String username) {
+        return ok(loginService.userExists(username));
     }
 }

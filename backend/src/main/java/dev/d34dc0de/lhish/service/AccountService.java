@@ -1,48 +1,52 @@
 package dev.d34dc0de.lhish.service;
 
-import dev.d34dc0de.lhish.exceptions.NotFoundException;
 import dev.d34dc0de.lhish.model.Account;
 import dev.d34dc0de.lhish.repository.AccountRepository;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class AccountService {
+public class AccountService extends BaseService<Account, AccountRepository> {
 
     private final AccountRepository accountRepository;
 
-    public AccountService(AccountRepository accountRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public AccountService(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
+        super(accountRepository);
         this.accountRepository = accountRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public Account createAccount(Account account) {
-        return accountRepository.insert(account);
+    @Override
+    public Account save(Account account) {
+        String hashedPassword = getHashedPassword(account.getPassword());
+        account.setPassword(hashedPassword);
+        return super.save(account);
+    }
+
+    public Account updateNoHash(Account account) {
+        return super.update(account);
+    }
+
+    private String getHashedPassword(String password) {
+        return passwordEncoder.encode(password);
     }
 
     public Optional<Account> findByUsernameAndPassword(String username, String password) {
-        return accountRepository.findByUsernameAndPassword(username, password);
+        return findByUsername(username)
+                .map(acc -> passwordMatches(password, acc.getPassword()) ? acc : null);
+    }
+
+    private boolean passwordMatches(String password, String hashedPassword) {
+        return passwordEncoder.matches(password, hashedPassword);
     }
 
     public Optional<Account> findByUsername(String username) {
-        return accountRepository.findByUsername(username);
-    }
-
-    /**
-     * Try to find an account by its id.
-     * @param id id of the account to find.
-     * @return Optional<Account> if found, empty Optional otherwise.
-     */
-    public Optional<Account> findById(String id) {
-        return accountRepository.findById(id);
-    }
-
-    /**
-     * Get an account by its id.
-     * @param id id of the account to get.
-     * @return Category if found, throws NotFoundException otherwise.
-     */
-    public Account getById(String id) {
-        return accountRepository.findById(id).orElseThrow(() -> new NotFoundException("Account", id));
+        Criteria criteria = Criteria.where("username").is(username);
+        return accountRepository.queryOne(criteria);
     }
 }

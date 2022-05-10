@@ -7,6 +7,8 @@ import {Field, IntegerSymbolField} from "../card_field_components/Fields";
 import {useAuthPost} from "../hooks/QueryHooks";
 import {useValidation} from "../hooks/ValidationHook";
 import {useInput} from "../hooks/InputHook";
+import {PermissionGuard} from "./PermissionGuard";
+import {PermissionNames} from "../views/PermissionNames";
 
 export interface ItemInputFieldsFormRef {
     createTemplate: () => void;
@@ -22,7 +24,7 @@ export interface ItemInputFieldsFormProps {
 export const ItemInputFieldsForm = forwardRef<ItemInputFieldsFormRef, ItemInputFieldsFormProps>(
     ({setError, onFieldsChange, onTemplateCreated}: ItemInputFieldsFormProps, ref) => {
         const valueTypeDropdownRef = useRef<ValueTypeDropdownRef>(null);
-        const [existingTemplate, setExistingTemplate] = useState<boolean>(false);
+        const [existingTemplate, setExistingTemplate] = useState<boolean>(true);
 
         const [fields, setFields] = useState<(Field | null)[]>([]);
         const fieldFactoryRef = useRef<InputFieldFactoryRef>(null);
@@ -45,7 +47,7 @@ export const ItemInputFieldsForm = forwardRef<ItemInputFieldsFormRef, ItemInputF
         );
 
         const mapFieldObject = (field: Field | null) => {
-            if(field === null) {
+            if (field === null) {
                 return null;
             }
             const {name, type, ...values} = field;
@@ -113,18 +115,21 @@ export const ItemInputFieldsForm = forwardRef<ItemInputFieldsFormRef, ItemInputF
 
         return (
             <Grid item xs={5}>
-                <FormControlLabel
-                    label="Existing template"
-                    control={
-                        <Checkbox
-                            value={existingTemplate}
-                            onChange={
-                                (e: React.ChangeEvent<HTMLInputElement>) =>
-                                    setExistingTemplate(e.target.checked)
-                            }
-                        />
-                    }
-                />
+                <PermissionGuard permissionName={PermissionNames.UserCreateTemplate}>
+                    <FormControlLabel
+                        label="Existing template"
+                        control={
+                            <Checkbox
+                                value={existingTemplate}
+                                onChange={
+                                    (e: React.ChangeEvent<HTMLInputElement>) =>
+                                        setExistingTemplate(e.target.checked)
+                                }
+                                defaultChecked
+                            />
+                        }
+                    />
+                </PermissionGuard>
                 {!existingTemplate && <Stack>
                     <TextField
                         autoFocus
@@ -152,9 +157,6 @@ export const ItemInputFieldsForm = forwardRef<ItemInputFieldsFormRef, ItemInputF
                         setError={setError}
                         ref={fieldFactoryRef}
                     />
-                    <Button onClick={() => {
-                        console.log(fieldFactoryRef.current?.getFields())
-                    }}>TEST</Button>
                 </Stack>}
                 {existingTemplate &&
                     <Stack>

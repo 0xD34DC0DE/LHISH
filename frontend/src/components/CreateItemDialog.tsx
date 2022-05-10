@@ -4,7 +4,6 @@ import React, {useEffect, useRef, useState} from "react";
 import {useAuthFormPost} from "../hooks/QueryHooks";
 import {ErrorMessage} from "./ErrorMessage";
 import {SuccessMessage} from "./SucessMessage";
-import {ItemCard} from "./ItemCard";
 import {Field} from "../card_field_components/Fields";
 import {ItemBasicData, ItemBasicDataForm, ItemBasicDataFormRef} from "./ItemBasicDataForm";
 import {ItemInputFieldsForm, ItemInputFieldsFormRef} from "./ItemInputFieldsForm";
@@ -43,7 +42,7 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
     const createItem = () => {
         setError(null);
 
-        if(!itemBasicDataFormRef.current?.validate()) {
+        if (!itemBasicDataFormRef.current?.validate()) {
             return;
         }
 
@@ -78,11 +77,9 @@ export const CreateItemDialog = ({innerRef, onItemCreated}: CreateItemDialogProp
         setFields([]);
     }, []);
 
-    //TODO toggle switch for batch mode: preserve template and clear fields
-
     const updateItemBasicData = (imageBasicData: ItemBasicData) => {
         setItemBasicData(imageBasicData);
-        if(imageBasicData.image) {
+        if (imageBasicData.image) {
             setImagePreviewUrl(URL.createObjectURL(imageBasicData.image))
         } else {
             setImagePreviewUrl(null);

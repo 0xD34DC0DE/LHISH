@@ -14,19 +14,13 @@ export const SessionConditionalElement = ({loggedIn, roles = [], element}: Sessi
 
 interface SessionSwitchProps {
     children?: React.ReactNode,
-    devOverride?: { login: boolean, role: string } //TODO remove
 }
 
-const SessionSwitch = ({children, devOverride}: SessionSwitchProps) => {
+const SessionSwitch = ({children}: SessionSwitchProps) => {
     const {session} = useContext(SessionContext);
 
     const filterChildren = (children: React.ReactNode): React.ReactNode[] => {
         let filteredChildren: React.ReactElement[] = [];
-
-        //TODO remove
-        if (devOverride) {
-            console.log("using dev overrides for SessionSwitch");
-        }
 
         React.Children.map(children, e => {
             if (!React.isValidElement(e)) {
@@ -42,14 +36,6 @@ const SessionSwitch = ({children, devOverride}: SessionSwitchProps) => {
             }
 
             const {loggedIn, roles = [""]} = e.props;
-            //TODO remove
-            if (devOverride) {
-                const {login = false, role = ""} = devOverride;
-                if (loggedIn === login && roles.indexOf(role) !== -1) {
-                    filteredChildren.push(e);
-                    return;
-                }
-            }
 
             if (loggedIn === session.loggedIn && roles.indexOf(session.role) !== -1) {
                 filteredChildren.push(e);
