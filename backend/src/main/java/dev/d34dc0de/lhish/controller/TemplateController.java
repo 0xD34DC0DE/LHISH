@@ -2,17 +2,19 @@ package dev.d34dc0de.lhish.controller;
 
 import dev.d34dc0de.lhish.form.TemplateCreationForm;
 import dev.d34dc0de.lhish.service.TemplateService;
+import dev.d34dc0de.lhish.view.DBMetricsView;
 import dev.d34dc0de.lhish.view.TemplateIdNamePairListView;
+import dev.d34dc0de.lhish.view.TemplateView;
 import dev.d34dc0de.lhish.view.ValueFieldView;
-import dev.d34dc0de.lhish.view.view_factory.TemplateViewFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/template")
-public class TemplateController {
+public class TemplateController extends BaseController {
 
     private final TemplateService templateService;
 
@@ -22,23 +24,23 @@ public class TemplateController {
 
     @PostMapping("/create")
     private ResponseEntity<String> createTemplate(@RequestBody TemplateCreationForm form) {
-        return ResponseEntity.ok(
-                templateService.insertTemplateFromForm(form).getId()
-        );
+        return ok(templateService.insertTemplateFromForm(form).getId());
     }
 
     @GetMapping("/all/ids")
     private ResponseEntity<TemplateIdNamePairListView> getAllNonInstanceIds() {
-        return ResponseEntity.ok(
-                TemplateViewFactory.toTemplateIdNamePairListView(templateService.findAllNonInstanceTemplate())
-        );
+        return ok(mapFromList(templateService.findAllNonInstanceTemplate(), TemplateIdNamePairListView.class));
     }
 
     @GetMapping("/{id}")
     private ResponseEntity<List<ValueFieldView>> getTemplateValueField(@PathVariable String id) {
-        return ResponseEntity.ok(
-                TemplateViewFactory.toTemplateView(templateService.getById(id)).valueFieldViews()
-        );
+        return ok(map(templateService.getById(id), TemplateView.class).valueFieldViews());
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/metrics")
+    private ResponseEntity<DBMetricsView> getMetrics() {
+        return ok(map(templateService.getMetrics(), DBMetricsView.class));
     }
 
 }

@@ -9,6 +9,8 @@ import {ItemHistoryDialog} from "./ItemHistoryDialog";
 import {useDeleteEntity} from "../hooks/CardDeleteHook";
 import {Field} from "../card_field_components/Fields";
 import {ValueFieldFactory} from "../card_field_components/card_field/base/ValueFieldFactory";
+import {PermissionGuard} from "./PermissionGuard";
+import {PermissionNames} from "../views/PermissionNames";
 
 interface ItemCardProps extends IItem {
     onDelete: () => void;
@@ -65,13 +67,12 @@ export const ItemCard = ({
                                 onClick={onHistoryButtonClicked}>
                         <UserHistory/>
                     </IconButton>
-                    <IconButton aria-label="Localize">
-                        <NotListedLocationIcon/>
-                    </IconButton>
-                    <IconButton aria-label="Localize" sx={{marginLeft: "auto"}}
-                                onClick={deleteButtonClicked}>
-                        <ClearIcon/>
-                    </IconButton>
+                    <PermissionGuard permissionName={PermissionNames.UserDeleteItem}>
+                        <IconButton aria-label="Localize" sx={{marginLeft: "auto"}}
+                                    onClick={deleteButtonClicked}>
+                            <ClearIcon/>
+                        </IconButton>
+                    </PermissionGuard>
                 </CardActions>
             </Card>
             <ItemHistoryDialog innerRef={historyDialogRef} itemHistoryId={historyId ?? ""}/>

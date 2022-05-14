@@ -1,9 +1,7 @@
 package dev.d34dc0de.lhish.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import dev.d34dc0de.lhish.annotation.CascadeDelete;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -18,5 +16,7 @@ public class Category {
     String userId;
     String name;
     String description;
+
+    @CascadeDelete(Image.class)
     String imageId;
 }

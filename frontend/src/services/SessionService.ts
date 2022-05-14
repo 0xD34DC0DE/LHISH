@@ -15,7 +15,7 @@ type JwtToken = {
 }
 
 export const authenticate = async (username: string, password: string, onError: (reason: any) => void) => {
-    return await axios.post<TokenResponse>("http://localhost:8080/authenticate", {username, password})
+    return await axios.post<TokenResponse>("http://localhost:8080/login", {username, password})
         .then(value => {
             if (value.data.error) {
                 onError(value.data.error);
@@ -29,7 +29,7 @@ export const authenticate = async (username: string, password: string, onError: 
 }
 
 export const checkUsernameExists = async (username: string) => {
-    return await axios.get<Boolean>(`http://localhost:8080/user/exists/${username}`)
+    return await axios.get<Boolean>(`http://localhost:8080/login/exists/${username}`)
         .then(value => {
             return value.data;
         }).catch(reason => {

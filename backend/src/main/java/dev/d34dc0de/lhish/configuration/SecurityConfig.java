@@ -36,13 +36,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.cors();
         http.authorizeRequests()
-                .antMatchers("/authenticate",
+                .antMatchers(
+                        "/login/**",
                         "/user/register",
-                        "/user/exists/*",
                         "/user/usernames",
+                        "/user/exists/*",
+                        "/permission/name/*",
                         "/image/*").permitAll()
-                .antMatchers("/user/*").hasAuthority("USER")
-                .antMatchers("/admin/*").hasAuthority("ADMIN")
+                .antMatchers("/user/*").authenticated()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

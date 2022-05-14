@@ -6,6 +6,7 @@ import {CreateCategoryDialog} from "../components/CreateCategoryDialog";
 import ICategory from "../views/CategoryView";
 import {CategoryCard} from "../components/CategoryCard";
 import {useAuthGet} from "../hooks/QueryHooks";
+import {PermissionNames} from "../views/PermissionNames";
 
 const CategoriesPage = () => {
     const dialogRef = useRef<DialogBaseRef>(null);
@@ -16,7 +17,7 @@ const CategoriesPage = () => {
     }, []);
 
     const onAddButtonClick = () => {
-       dialogRef.current?.openDialog();
+        dialogRef.current?.openDialog();
     }
 
     const onDelete = () => {
@@ -31,11 +32,13 @@ const CategoriesPage = () => {
 
     const onCategoryCreated = () => {
         reset();
+        get();
     }
 
     return (
         <>
-            <PageHeader title={"Categories"} onAddButtonClick={onAddButtonClick}/>
+            <PageHeader title={"Categories"} onAddButtonClick={onAddButtonClick}
+                        buttonPermission={PermissionNames.UserCreateCategory}/>
 
             {/*TODO add column number change when going small (responsive)*/}
             <CardMasonry cards={mapCategories(categories ?? [])}/>

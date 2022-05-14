@@ -2,14 +2,16 @@ import {Box, Button, Divider, TablePagination, Typography} from "@mui/material";
 import StarIcon from "@mui/icons-material/Star";
 import {yellow} from "@mui/material/colors";
 import React, {useState} from "react";
+import {PermissionGuard} from "./PermissionGuard";
 
 
-interface PageHeaderPropTypes  {
+interface PageHeaderPropTypes {
     title: string | React.ReactNode;
     onAddButtonClick?: () => void;
+    buttonPermission?: string;
 }
 
-export const PageHeader = ({title, onAddButtonClick}: PageHeaderPropTypes) => {
+export const PageHeader = ({title, onAddButtonClick, buttonPermission}: PageHeaderPropTypes) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -18,8 +20,6 @@ export const PageHeader = ({title, onAddButtonClick}: PageHeaderPropTypes) => {
 
     const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     }
-
-
 
     return (
         <>
@@ -49,16 +49,18 @@ export const PageHeader = ({title, onAddButtonClick}: PageHeaderPropTypes) => {
                     marginRight: 4,
                     marginLeft: "auto",
                 }}>
-                    <Button variant={"contained"}
-                            onClick={() => onAddButtonClick()}
-                            sx={{
-                                display: "flex",
-                                flexGrow: "true",
-                                marginRight: 0.5,
-                                justifyContent: "center",
-                                alignContent: "center",
-                                flexDirection: "column"
-                            }}>Add</Button>
+                    <PermissionGuard permissionName={buttonPermission ?? null}>
+                        <Button variant={"contained"}
+                                onClick={() => onAddButtonClick()}
+                                sx={{
+                                    display: "flex",
+                                    flexGrow: "true",
+                                    marginRight: 0.5,
+                                    justifyContent: "center",
+                                    alignContent: "center",
+                                    flexDirection: "column"
+                                }}>Add</Button>
+                    </PermissionGuard>
                 </Box>}
             </Box>
             <Divider sx={{marginBottom: 3}}/>

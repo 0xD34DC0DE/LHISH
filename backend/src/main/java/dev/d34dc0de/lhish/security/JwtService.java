@@ -52,7 +52,7 @@ public class JwtService implements Clock {
     }
 
     private Date generateExpiration() {
-        return Date.from(LocalDateTime.now().plusHours(4).toInstant(UTC));
+        return Date.from(LocalDateTime.now().plusDays(1).toInstant(UTC));
     }
 
     public String tokenFromAccount(JwtAccount account) {

@@ -1,5 +1,6 @@
 package dev.d34dc0de.lhish.model;
 
+import dev.d34dc0de.lhish.annotation.CascadeDelete;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +20,13 @@ public class Item {
     private String description;
     private String categoryId;
     private String userId;
+
+    @CascadeDelete(Image.class)
     private String imageId;
+
+    @CascadeDelete(ItemHistory.class)
     private String historyId;
+
+    @CascadeDelete(Template.class)
     private String templateId;
 }

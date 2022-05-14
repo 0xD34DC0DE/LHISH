@@ -4,6 +4,8 @@ import React from "react";
 import LaunchIcon from '@mui/icons-material/Launch';
 import ICategory from "../views/CategoryView";
 import {useDeleteEntity} from "../hooks/CardDeleteHook";
+import {PermissionGuard} from "./PermissionGuard";
+import {PermissionNames} from "../views/PermissionNames";
 
 export interface CategoryCardProps extends ICategory {
     onDelete: () => void;
@@ -43,9 +45,11 @@ export const CategoryCard = ({id, name, description, imageId, onDelete}: Categor
                     </Typography>
                 </CardContent>
                 <CardActions disableSpacing>
-                    <IconButton aria-label="Localize" sx={{marginLeft: "auto"}} onClick={openDeleteDialog}>
-                        <ClearIcon/>
-                    </IconButton>
+                    <PermissionGuard permissionName={PermissionNames.UserDeleteCategory}>
+                        <IconButton aria-label="Localize" sx={{marginLeft: "auto"}} onClick={openDeleteDialog}>
+                            <ClearIcon/>
+                        </IconButton>
+                    </PermissionGuard>
                 </CardActions>
             </Card>
             {getDialogs()}
